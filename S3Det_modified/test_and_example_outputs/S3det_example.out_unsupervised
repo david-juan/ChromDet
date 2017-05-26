@@ -1,0 +1,96 @@
+UI: Initial number of sequences: 43
+UI: Initial number of positions: 180
+UI: Number of outliers: 0
+UI: Final number of sequences after removing outliers: 43
+UI: Final number of positions after removing gappy columns: 139
+II: Final number of columns in the disjunctive matrix: 916
+UI: Number of axes selected: 2
+UI: Percentage of initial variance considered informative: 50.6558 %
+UI: Checking a maximum number of groups equal to: 11
+UI: Stable cluster results have been found
+SC: YES
+UI: Number of groups selected: 3
+II: Clustering index value: CH_Index = 236.632
+II: F-Fisher: 2258.03
+II: Best solution found 481 times out of 500 iterations searching for 3 groups
+UI: Number of groups with less than 3 sequences: 0
+Is there enough group diversity to perform the analysis?:
+GD: YES
+
+Clustering of sequences: 
+CL: MDH-ECO57|-1.1.1.37|PF00056	2
+CL: MDH-MANSM|-1.1.1.37|PF00056	2
+CL: MDH-HAEDU|-1.1.1.37|PF00056	2
+CL: MDHM-YEAST|-1.1.1.37|PF00056	2
+CL: MDHM-BRANA|-1.1.1.37|PF00056	2
+CL: MDHG-SOYBN|-1.1.1.37|PF00056	2
+CL: MDHM-CHLRE|-1.1.1.37|PF00056	2
+CL: MDHM-SCHMA|-1.1.1.37|PF00056	2
+CL: MDHM-HUMAN|-1.1.1.37|PF00056	2
+CL: MDHM-CAEEL|-1.1.1.37|PF00056	2
+CL: MDHP-YEAST|-1.1.1.37|PF00056	2
+CL: MDHC-YEAST|-1.1.1.37|PF00056	2
+CL: MDHC-MEDSA|-1.1.1.37|PF00056	1
+CL: MDHC-PIG|-1.1.1.37|PF00056	1
+CL: MDHC-ECHGR|-1.1.1.37|PF00056	1
+CL: MDH-XANCP|-1.1.1.37|PF00056	1
+CL: MDH-AQUAR|-1.1.1.37|PF00056	1
+CL: MDH-BDEBA|-1.1.1.37|PF00056	1
+CL: MDH-DEIRA|-1.1.1.37|PF00056	1
+CL: MDH-THET2|-1.1.1.37|PF00056	1
+CL: MDH-DESPS|-1.1.1.37|PF00056	1
+CL: MDH-PROAC|-1.1.1.37|PF00056	1
+CL: MDH-MYCLE|-1.1.1.37|PF00056	1
+CL: MDH-NOCFA|-1.1.1.37|PF00056	1
+CL: MDH-STRAW|-1.1.1.37|PF00056	1
+CL: MDH-NITEU|-1.1.1.37|PF00056	1
+CL: MDH-LEGPH|-1.1.1.37|PF00056	1
+CL: MDH-COXBU|-1.1.1.37|PF00056	1
+CL: MDH-LEPIN|-1.1.1.37|PF00056	1
+CL: MDH-METCA|-1.1.1.37|PF00056	1
+CL: MDH-CORDI|-1.1.1.37|PF00056	1
+CL: MDH-COREF|-1.1.1.37|PF00056	1
+CL: MDH-PARUW|-1.1.1.37|PF00056	1
+CL: MDH-CHLMU|-1.1.1.37|PF00056	1
+CL: MDH-CHLCV|-1.1.1.37|PF00056	1
+CL: LDHB-FUNHE|-1.1.1.27|PF00056	3
+CL: LDHA-HARAN|-1.1.1.27|PF00056	3
+CL: LDHC-PIG|-1.1.1.27|PF00056	3
+CL: LDHC-RAT|-1.1.1.27|PF00056	3
+CL: LDH-CAEEL|-1.1.1.27|PF00056	3
+CL: LDH6B-HUMAN|-1.1.1.27|PF00056	3
+CL: LDH-DROME|-1.1.1.27|PF00056	3
+CL: LDH-MAIZE|-1.1.1.27|PF00056	3
+
+Are there any position predicted as being important for the whole family?: 
+PR: YES
+Positions predicted (SDPs): 
+Position	Average_rank	Number_of_groups_within_the_complete_partition	List_of_clusters(rank_within_cluster)
+RE: 103	1	2	Partition_based_on: Cluster_1(rank:1) Cluster_2_3_(rank:1)
+RE: 67	1	2	Partition_based_on: Cluster_1(rank:1) Cluster_2_3_(rank:1)
+RE: 152	1	2	Partition_based_on: Cluster_3(rank:1) Cluster_1_2_(rank:1)
+RE: 64	1	2	Partition_based_on: Cluster_1(rank:1) Cluster_2_3_(rank:1)
+RE: 21	1.7	3	Partition_based_on: Cluster_1(rank:3) Cluster_2(rank:1) Cluster_3(rank:1)
+RE: 107	2.5	2	Partition_based_on: Cluster_3(rank:4) Cluster_1_2_(rank:1)
+RE: 147	2.5	2	Partition_based_on: Cluster_2(rank:4) Cluster_1_3_(rank:1)
+RE: 14	3	3	Partition_based_on: Cluster_1(rank:1) Cluster_2(rank:7) Cluster_3(rank:1)
+RE: 61	3.5	2	Partition_based_on: Cluster_3(rank:1) Cluster_1_2_(rank:6)
+RE: 106	4.5	2	Partition_based_on: Cluster_3(rank:1) Cluster_1_2_(rank:8)
+
+UI: Number of positions predicted to be important for the group segregation: 10
+
+Are there any conserved position at 90 % of identity?: 
+CN: YES
+Conserved positions: 
+CP: 7
+CP: 40
+CP: 60
+CP: 110
+CP: 113
+CP: 116
+CP: 120
+CP: 123
+CP: 149
+CP: 150
+
+UI: Number of conserved positions (at 90 % of identity): 10
