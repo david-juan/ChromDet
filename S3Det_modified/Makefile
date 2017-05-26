@@ -11,6 +11,7 @@ LINK_DYNAMIC=-lm  -lboost_regex
 default: all
 
 all:
+	tar -zxvf Newmat10D.tar.gz
 	cd Newmat10D && tar -zxvf newmat10D.tar.gz
 	cp Newmat10D/nm_gnu.mak Newmat10D/Makefile
 	make -C Newmat10D
