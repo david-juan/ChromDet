@@ -1,0 +1,212 @@
+
+                               M C d e t
+
+                                v 2.1 
+
+                        A. Rausell & A. Valencia
+
+                                 -o-
+
+
+Information
+===========
+
+MCdet implements a methods for detecting positions in multiple 
+sequence alignments with a "function-dependent" conservation pattern.
+These positions have been shown to be related to functionality, and
+they complement the fully conserved positions as predictors of functionality
+from sequence information
+
+MCdet is a supervised method for detecting functional sites from multiple
+protein alignments which incorporates an external binary functional classification
+(instead of using the one implicit in the phylogeny). Such possibility is intended
+for cases where some degree of phylogeny/function disagreement is suspected.
+
+MCdet is based on a vectorial representation of the alignment on which Multiple
+Correspondence Analysis (MCA) is used to locate the residues which better follow
+the pattern of presence/absence of a given function. Row scores represent Chi-squared
+distances from residues in the alignment to function. The smaller the distance, the
+better the fitting between the patterns of presence/absence of a given residue and a
+given function. We define a residue as a certain amino acid type in a certain position
+of the multiple sequence alignment. Therefore, residues with low Chi-squared distances
+to a certain function are taken as the predicted functional sites responsible for that
+function.
+
+
+The original "MCdet-method" is described in:
+
+* Florencio Pazos, Antonio Rausell & Alfonso Valencia. (2006).
+  Phylogeny-independent detection of functional residues.
+  Bioinformatics. 22(12):1440-1448.
+
+Please, cite these references when reporting any result obtained using
+this program.
+
+
+MCdet Software License - Version 2.1 - May 5th, 2010
+====================================================
+I place no restrictions on the use of S3det and MCdet except that I take no liability for any
+problems that may arise from its use, distribution or other dealings with it. You can use it
+only for academic purposes and not in commercial projects. You can make and distribute modified
+or merged versions. You can include parts of it in your own software. If you distribute modified
+or merged versions, please make it clear which parts are mine and which parts are modified. For
+a substantially modified version, simply note that it is, in part, derived from my software. A
+comment in the code will be sufficient.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE AND
+NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE
+LIABLE FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Please understand that there may still be bugs and errors. Use at your own risk. I (Antonio Rausell)
+take no responsibility for any errors or omissions in this package or for any misfortune that may
+befall you or others as a result of your use, distribution or other dealings with it.
+
+
+Using the program
+=================
+
+The distributed program is an executable file ("MCdet_v2.1.exe") for UNIX-based OSs (64 bits).
+
+-----------------------------------------------------------------------------
+
+** Usage:  ./MCdet.exe -i aln_file(FASTA) -f functional_binary_classification_file -o output_file  -p(optional)
+
+Options:
+-p
+   Generates '1000' random alns in order to associate P-values to the
+   Chi-squared distances from residues to functions.
+   The default is to skip shuffling and report a single Chi-squared distance.
+   It can take a long time for the program to run for alignments with many
+   sequences and many positions 
+
+
+The first input for the program is a multiple sequence alignment. WARNING: This
+has to be provided in FASTA format. There is not a minimum number of sequences and/or
+positions for the program to run, but it is recommended having at least 12 sequences
+with enough functional diversity between them. An example can be seen in the attached
+"MCdet_example.fasta" file
+
+The results of the program TOTALLY depend on the multiple sequence alignment
+used. As the method uses an external set of functional labels, it does not
+matter how divergent the sequences in the alignment are (structural alignments,
+etc) as long as the alignment is correct. Nevertheless, filters concerning
+redundancy levels, fragments and gappy columns should be applied.
+
+As a second input, an external functional binary classification has to be imported.
+The external functional classification is incorporated in the form of a matrix of
+"functional binary membership" between proteins (by rows) and functions (by columns).
+The format of this file can be seen in the attached "MCdet_example.func" file. The first
+line contains the name of the functions to be studied, separated by <TAB>. Following lines
+code in a binary way the presence (1) or absence (0) of the corresponding function
+column for every protein in the alignment. 
+
+A given protein can belong to more than one function or to neither of them, but WARNING:
+missing values are not accepted. NOTICE that this coding enables you to study overlapping
+functions. NOTICE: FUZZY CODING is accepted, that is, coding the protein's membership of a
+given function with a number between "0" and "1" (e.g. "0.25"). This allows you to provide a
+certain probability of membership in case you are not sure. 
+
+To statistically asses the significance of the scores, the program can shuffle the
+alignment one thousand times and calculate p-values of the original Chi-squared distances
+with respect to the distribution of scores of the shuffled alignments. Shuffling is done
+by changing the order of the sequences in the multiple sequence alignment. To activate
+this shuffling, simply add "-p" as a forth argument Two p-values are reported associated
+to the score of each position. They are based on two background distributions of scores
+obtained from the shuffled alignments, one with the scores for that position only (local
+p-value),and another one with the scores of all positions (global p-value). We are still
+working on defining a good null-model and background distributions for this problem.
+So this option is still experimental. If this option is not used, p-values are not calculated
+and only the raw score is reported. Please note that big alignments can result in very long
+running times if -p is set.
+
+
+Output description
+==================
+
+An example can be seen in the attached "MCdet_example.output" file:
+
+=========================================================================================================
+List of functions:                                                    #Name of the binary coded functions
+1R	2R	1K	2K	1A	RXXKP	2D	
+______________________________________________________________________________
+
+                        #Complete list of residues sorted by Chi-squared distance to every tested function 
+Best scores for function 1R        
+
+   Residue	   X2-dist	global-pvalue	local-pvalue
+       22G	 1.3898986	0.00063888889	     0.051
+        7Y	 1.4327547	0.002724359	     0.214
+        6L	  1.442366	0.0030705128	     0.134
+        8D	 1.4564382	0.0035213675	     0.181
+       56V	 1.4728956	0.0045405983	     0.086
+       49G	 1.4770979	0.010634615	     0.937
+       52P	 1.4770979	0.010634615	     0.937
+       37W	 1.4770979	0.010634615	     0.937
+       38W	  1.487763	0.012634615	     0.146
+        5A	 1.5026858	0.015878205	      0.59
+      ....          .....          ......             ....
+
+       48I	 6.1791438	0.98672436	     0.374
+       21T	 6.1791438	0.98672436	     0.374
+______________________________________________________________________________
+
+
+Best scores for function 2R
+
+   Residue	   X2-dist	global-pvalue	local-pvalue
+       43N	 1.4790199	1.7094017e-05	         0
+       54N	 1.7248188	0.00088034188	     0.005
+       17L	  1.767767	0.0019679487	     0.045
+       34#	 1.7911821	0.0035384615	     0.046
+        5A	 1.8016569	0.0045833333	     0.048
+       23D	 1.8114221	0.0060811966	     0.097
+       14D	 1.8290949	0.007025641	     0.025
+      ....          .....          ......             ....
+
+=========================================================================================================
+Column 1: Residue (Position number + Amino acid type).
+          Positions are numbered as in the multiple sequence
+          alignment. GAPS are included in this numbering ("#" symbol). MCdet doesn't
+          perform any filtering of gappy columns, so user should do it in advance
+          according to its own thresholds OR just ignore them a posteriori.
+  "    2: Chi-squared distance from residue to corresponding function. Residues are
+          sorted according to this raw score. The smaller the distance, the better
+          the fitting between the patterns of presence/absence of the residue and 
+          the function. 
+          
+If the "-p" option is used, 2 additional columns contain the p-values calculated
+with respect to the shuffled scores for all positions (global-pvalue) and the
+shuffled scores for that position (local-pvalue) respectively (see above).
+
+
+As explained in the referenced paper, it is still difficult to automatically find large
+sets of examples for which a phylogeny/function disagreement is suspected, as well as
+their associated supervised functional classes and annotated functional sites. This
+makes it difficult to test the method presented in datasets large enough to extract
+statistically meaningful cutoffs or confidence values, and to tune the parameters. Thus,
+for the moment, user should choose their own cut-offs fitted to the specific case study.
+
+
+Example
+========
+
+./MCdet_v2.1.exe -i MCdet_example.fasta -f MCdet_example.func -o MCdet_example.output -p
+./MCdet_v2.1.exe -i MCdet_example.fasta -f MCdet_example.func -o MCdet_example.output
+--
+
+
+Please, cite the reference above when reporting any data obtained 
+using this program.
+
+Send any query/comment to the following address. Use this address also for
+reporting bugs. We will be very happy to know on any result (good or bad ;-)
+you may obtain using this program.
+
+Antonio Rausell
+Structural Biology and Biocomputing Programme
+Spanish National Cancer Research Centre (CNIO)
+Melchor Fernandez Almagro, 3. E-28029 Madrid
+Phone: +34-912246900 (ext 2254)
+e-mail address:	arausell@cnio.es
