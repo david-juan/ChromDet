@@ -6,6 +6,6 @@ This repository contains a slightly modified version of S3det (Rausell et al. PN
 
 ### Directories
 
--  S3det distribution slightly modified to allow a higher number of variables and provide a more informative output (https://github.com/david-juan/ChromDet/S3det_modified/)
--  Scripts for input pre-processing, S3det execution and output formating (https://github.com/david-juan/ChromDet/scripts/)
--  Test files for performing an example toy analysis involving 9 samples from the original article (Carrillo-de Santa Pau et al.)
+-  S3det distribution slightly modified to allow a higher number of variables and provide a more informative output (https://github.com/david-juan/ChromDet/tree/master/S3Det_modified/)
+-  Scripts for input pre-processing, S3det execution and output formating (https://github.com/david-juan/ChromDet/tree/master/scripts/)
+-  Test files for performing an example toy analysis involving 9 samples from the original article (Carrillo-de Santa Pau et al.) (https://github.com/david-juan/ChromDet/tree/master/test/)
