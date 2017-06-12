@@ -50,7 +50,7 @@ ChromDet is a software for UNIX/Linux systems.
 
 ### 3) Run the complete analysis (recommended)
 
-- ./run_S3det_analysis -b <dir containing the bedfiles> -c <file with the equivalences between chromatin states and their groups> -a <file with human meaningful names for the samples>
+- ./run_S3det_analysis -b \<dir containing the bedfiles\> -c \<file with the equivalences between chromatin states and their groups\> -a \<file with human meaningful names for the samples\>
 
 #### Toy Example
 
