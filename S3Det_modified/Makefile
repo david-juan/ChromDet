@@ -20,7 +20,8 @@ all:
 	cd ./cluster-1.49 && perl Makefile.PL
 	make -C cluster-1.49
 	
-	tar -zxvf boost_1_42_0.tar.gz
+	tar -jxvf boost_1_42_0a.tar.bz2
+	tar -jxvf boost_1_42_0b.tar.bz2
 	cd boost_1_42_0 && ./bootstrap.sh --prefix=../boost --with-libraries=regex
 	cd boost_1_42_0 && ./bjam install
 	cd boost_1_42_0/libs/regex/build && make -fgcc.mak
