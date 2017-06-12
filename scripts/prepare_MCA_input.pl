@@ -20,7 +20,9 @@ prepare_MCA_input.pl
 	   -d		'bed_dir' [MANDATORY] directory containing the set of genome segmentations in bed format.
 	   -a		'sample annotation file' [OPTIONAL] file containing the list of names of the bed files to analyse
 	 			(mnemonic names of the samples to include in the results can be included in a second tab separated column).
-	 			In case this file is not provided, all bed file in 'bed_dir' will be used. 
+	 			In case this file is not provided, all bed file in 'bed_dir' will be used.
+	   -c		'state_collapses_file' [OPTIONAL] two-column tabular file containg equivalences between each chromatin state present in the genome segmentations and collapsed states.
+	 			Collapses are recommended to be based on their shared biological role (eg. different states replecting enhancers).
 	   -n		'min_num_states' [OPTIONAL] minimum number of states found in a region along all the samples (default value = 2)
 	   -m		'min_num_samples_per_state' [OPTIONAL] minimum number of samples with an state to be considered in filtering (see -n; default value = 2)
 	   -r		'min_num_regions_pattern' [OPTIONAL] minimal number of regions with the same pattern of states along the samples to be included in the analysis (default value = 10)
@@ -61,9 +63,9 @@ $"="\t";
 
 
 my ($bed_dir,$beds_file,$opt_help,$bedtools_path,$command,$cnt,$pre_cnt,$header,$prev_chr,$prev_start,$prev_end,$prev_pattern,$prev_ok,$sample,$state,$collapsed_sample_filtered);
-my ($prev_ok_region,$min_states,$min_samples_states,$min_regions_pattern,$out_pre,$bedtools_path);
-my (@AA,@tr,@tr2,@bed_files,@working_beds,@sample_names,@prev_ok_regions,@names,@seq,$i,,@states);
-my (%working_mnemo_bed_files,%states,%cont_patterns,%all_states,%states2code);
+my ($prev_ok_region,$min_states,$min_samples_states,$min_regions_pattern,$out_pre,$bedtools_path,$collapses_file,$original_state,$traslated_pattern);
+my (@AA,@tr,@tr2,@bed_files,@working_beds,@sample_names,@prev_ok_regions,@names,@seq,$i,@states);
+my (%working_mnemo_bed_files,%states,%cont_patterns,%all_states,%states2code,%states_collapses,%pattern_collapse,%all_collapse_states);
 
 $min_states=2;
 $min_samples_states=2;
@@ -75,6 +77,7 @@ $bedtools_path='';
 GetOptions (
 			'd=s' => \$bed_dir,
 			'a=s' => \$beds_file,
+			'c=s' => \$collapses_file,
 			'n=i' => \$min_states,
 			'm=i' => \$min_samples_states,
 			'r=i' => \$min_regions_pattern,
@@ -137,11 +140,28 @@ while(my $bed_file=readdir(BED_DIR))
 			{
 				$command="$bedtools_path intersect -a $bed_dir/tmp_$pre_cnt -b $bed_dir/$bed_file -wao |cut -f1-4,8 | perl -ne \'s\/\\t(\\w\+\\n\)\/\|\$1\/;print;\'  > $bed_dir/tmp_$cnt;rm $bed_dir/tmp_$pre_cnt";
 			}
-			`$command`;
+			system "$command";
 		}
 	}
 }
 closedir BED_DIR;
+
+if($collapses_file)
+{
+	open COLLAPSES_FILE, "$collapses_file" or die "I couldn't open $collapses_file\n";
+	while(<COLLAPSES_FILE>)
+	{
+		chomp;
+		@tr=split/\t/;
+		if(exists($states_collapses{$tr[0]}) and $states_collapses{$tr[0]} ne $tr[1])
+		{
+			die "ERROR: $collapses_file file contains abiguous collapses: $tr[0] is assigned to $states_collapses{$tr[0]} and to $tr[1]\n";
+		}
+		$states_collapses{$tr[0]}=$tr[1];
+		$all_collapse_states{$tr[1]}=1;
+	}
+	close COLLAPSES_FILE;
+}
 
 
 $"="|";
@@ -150,6 +170,7 @@ push @prev_ok_regions,"#Chr\tStart\tEnd\t@sample_names\n";
 system "echo $header > $bed_dir/$out_pre\_collapsed.tab;cat $bed_dir/tmp_$cnt >> $bed_dir/$out_pre\_collapsed.tab";
 system "rm $bed_dir/tmp_$cnt";
 
+$cnt=0;
 $prev_ok=0;
 open COLLAPSED_FILE, "$bed_dir/$out_pre\_collapsed.tab" or die "I couldn't open $bed_dir/$out_pre\_collapsed.tab\n";
 while(<COLLAPSED_FILE>)
@@ -162,7 +183,24 @@ while(<COLLAPSED_FILE>)
 		else{next;}
 	}else
 	{
-		if($prev_ok){push @prev_ok_regions, "$prev_chr\t$prev_start\t$prev_end\t$prev_pattern";}
+		if($prev_ok)
+		{
+			push @prev_ok_regions, "$prev_chr\t$prev_start\t$prev_end\t$prev_pattern";
+			if(!exists($pattern_collapse{$prev_pattern}))
+			{
+				$pattern_collapse{$prev_pattern}=$prev_pattern;
+				if($collapses_file)
+				{
+					foreach $original_state(keys(%states_collapses))
+					{
+						$pattern_collapse{$prev_pattern}=~s/^$original_state\|/$states_collapses{$original_state}|/ig;
+						$pattern_collapse{$prev_pattern}=~s/\|$original_state$/|$states_collapses{$original_state}/ig;
+						$pattern_collapse{$prev_pattern}=~s/\|$original_state\|/|$states_collapses{$original_state}|/ig;
+						$pattern_collapse{$prev_pattern}=~s/\|$original_state\|/|$states_collapses{$original_state}|/ig;
+					}
+				}
+			}
+		}
 		$prev_ok=0;
 		if($cont_patterns{$tr[3]}>$min_regions_pattern)
 		{
@@ -174,19 +212,30 @@ while(<COLLAPSED_FILE>)
 			$cont_patterns{$tr[3]}++;
 			next;
 		}
-		@tr2=split/\|/,$tr[$#tr];
-		undef %states;
-		foreach $sample(@tr2)
+		if(!/\#/)
 		{
-			$states{$sample}++;
-		}
-		$cnt=0;
-		foreach $state(keys(%states))
-		{
-			if(!exists($all_states{$state})){$all_states{$state}=1;}
-			if($states{$state}>$min_samples_states)
+			@tr2=split/\|/,$tr[$#tr];
+			undef %states;
+			foreach $sample(@tr2)
 			{
-				$cnt++;
+				$states{$sample}++;
+			}
+			$cnt=0;
+			foreach $state(keys(%states))
+			{
+				if(!exists($all_states{$state}))
+				{
+					$all_states{$state}=1;
+					if($collapses_file and !exists($states_collapses{$state}))
+					{
+						print STDERR "WARNING: state $state is present in the bed files but there is no collpsed state assign to it in $collapses_file\nIt will be kept with its original state\n";
+						$all_collapse_states{$state}=1;
+					}
+				}
+				if($states{$state}>$min_samples_states)
+				{
+					$cnt++;
+				}
 			}
 		}
 		if($cnt>$min_states)
@@ -205,19 +254,42 @@ while(<COLLAPSED_FILE>)
 }
 close COLLAPSED_FILE;
 
-@states=sort keys(%all_states);
-for($i=0;$i<@states;$i++)
+if($collapses_file)
 {
-	$states2code{$states[$i]}=$AA[$i];
+	@states=sort keys(%all_collapse_states);
+	for($i=0;$i<@states;$i++)
+	{
+		$states2code{$states[$i]}=$AA[$i];
+	}
+}else
+{
+	@states=sort keys(%all_states);
+	for($i=0;$i<@states;$i++)
+	{
+		$states2code{$states[$i]}=$AA[$i];
+	}
 }
 open OUT_BED_FILE, ">$bed_dir/$out_pre\_collapsed_filtered.tab" or die "I couldn't open $bed_dir/$out_pre\_collapsed_filtered.tab\n";;
 foreach $prev_ok_region(@prev_ok_regions)
 {
 	@tr=split/\t/,$prev_ok_region;
-	if($prev_ok_region =~ /^#/){print OUT_BED_FILE $prev_ok_region;chomp $tr[$#tr];@names=split/\|/,$tr[$#tr];next;}
+	if($prev_ok_region =~ /^#/)
+	{
+		print OUT_BED_FILE $prev_ok_region;
+		chomp $tr[$#tr];
+		@names=split/\|/,$tr[$#tr];
+		next;
+	}
 	if($cont_patterns{$tr[3]}>$min_regions_pattern)
 	{
-		print OUT_BED_FILE "$prev_ok_region\t$cont_patterns{$tr[3]}\n";
+		if(exists($pattern_collapse{$tr[3]}))
+		{
+			$traslated_pattern=$tr[3];
+			$traslated_pattern=~s/\|/\\|/ig;
+			$prev_ok_region=~s/$traslated_pattern/$pattern_collapse{$tr[3]}/;
+			@tr=split/\t/,$prev_ok_region;
+		}
+		print OUT_BED_FILE "$prev_ok_region\n";
 		@tr=split/\|/,$tr[3];
 		for($i=0;$i<@tr;$i++)
 		{
