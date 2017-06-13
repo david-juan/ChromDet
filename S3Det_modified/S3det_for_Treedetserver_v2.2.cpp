@@ -813,7 +813,7 @@ if(Functional_study=='U'){
 		else
 		{
 			if(Number_axes_option=='I'){	// Selection of the number of axes by the Wilcoxon test
-				Number_of_axes=1;
+				Number_of_axes=0;
 				double* Wilcoxon_pvalues;
 				int Wilcox_error_couldnt_open;
 				Wilcoxon_test(
@@ -838,9 +838,9 @@ if(Functional_study=='U'){
 				  return 1;
 				}
 				if(Verbose=="YES"){ fs << "Wilcoxon values:" << endl;}
-				for(int i=0;i<Maximum_number_of_axes-1;i++){
+				for(int i=0;i<Maximum_number_of_axes-2;i++){
 					if(Verbose=="YES"){ fs << Wilcoxon_pvalues[i] << endl;}
-					if(Wilcoxon_pvalues[i]<Wilcoxon_cutoff){Number_of_axes=i+2;}//NOTICE: For the moment it selects the last axes fulfiling the selected cut-off
+					if(Wilcoxon_pvalues[i]>Wilcoxon_cutoff && Number_of_axes==0){Number_of_axes=i+1;}//NOTICE: For the moment it selects the last axes fulfiling the selected cut-off
 					//cout << Wilcoxon_pvalues[i] << endl;
 				}
 			}
@@ -853,22 +853,16 @@ if(Functional_study=='U'){
 	}else
 	{
 		cout << "\t" << "Number of axes selected: " << Number_of_axes <<endl;
-		cout << "\t" << "Percentage of initial variance considered informative: " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()+1-Number_of_axes,D_percentage_accumulated.Ncols()+1-Number_of_axes))*100 << " %" << endl;
-		for(int i=0;i<Number_of_axes;i++){
-			cout << "\t\t" << "Percentage of variance explained by the axis "<<  i  + 1 <<  "  (selected): " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()-i,D_percentage_accumulated.Ncols()-i))*100 << " %" << endl;
+			cout << "\t" << "Percentage of initial variance considered informative: " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()+1-Number_of_axes,D_percentage_accumulated.Ncols()+1-Number_of_axes))*100 << " %" << endl;
+		for(int i=1;i<=Number_of_axes;i++){
+			cout << "\t\t" << "Percentage of variance explained by the axis "<<  i  <<  "  (selected): " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()+1-i,D_percentage_accumulated.Ncols()+1-i))*100 << " %" << endl;
 		}		
-		for(int i=Number_of_axes;i<10;i++){
-			cout << "\t\t" << "Percentage of variance explained by the axis "<<  i  + 1 <<  "  (not selected): " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()-i,D_percentage_accumulated.Ncols()-i))*100 << " %" << endl;
-		}	
 	}
 	fs << "UI: Number of axes selected: " << Number_of_axes <<endl;
 	fs << "UI: Percentage of initial variance considered informative: " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()+1-Number_of_axes,D_percentage_accumulated.Ncols()+1-Number_of_axes))*100 << " %" << endl;
-	for(int i=0;i<Number_of_axes;i++){
-		fs << "UI: Percentage of variance explained by the axis "<<  i  + 1 <<  "  (selected): " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()-i,D_percentage_accumulated.Ncols()-i))*100 << " %" << endl;
+	for(int i=1;i<=Number_of_axes;i++){
+		fs << "UI: Percentage of variance explained by the axis "<<  i   <<  "  (selected): " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()+1-i,D_percentage_accumulated.Ncols()+1-i))*100 << " %" << endl;
 	}		
-	for(int i=Number_of_axes;i<10;i++){
-		fs << "UI: Percentage of variance explained by the axis "<<  i  + 1 <<  "  (not selected): " << (D_percentage_accumulated(D_percentage_accumulated.Ncols()-i,D_percentage_accumulated.Ncols()-i))*100 << " %" << endl;
-	}	
 
 	//if(Verbose=="YES"){
 	//	fs << "D_percentage_accumulated :" << endl << setw(8) << setprecision(10) << D_percentage_accumulated << endl << endl;
