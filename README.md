@@ -29,7 +29,7 @@ ChromDet is a software for UNIX/Linux systems.
 
 -  Master Script for Sdet analyses (https://github.com/david-juan/ChromDet/tree/master/scripts/run_S3det_analysis.pl)
 -  Pre-processing script (https://github.com/david-juan/ChromDet/tree/master/scripts/prepare_S3det_analysis.pl)
--  Script for running S3det and formating its output (https://github.com/david-juan/ChromDet/tree/master/scripts/run_S3det.pl)
+-  Script for running S3det and formating its output (https://github.com/david-juan/ChromDet/tree/master/scripts/S3det_interface.pl)
 -  Bedfiles containing chromating states segmentations for the samples to analyse (nine examples at https://github.com/david-juan/ChromDet/tree/master/test/).
 -  Chromatin states collapses definition (an example at https://github.com/david-juan/ChromDet/tree/master/test/States_collapse.txt)
 -  Samples human readable names (an example at https://github.com/david-juan/ChromDet/tree/master/test/Samples_beds.tsv)
