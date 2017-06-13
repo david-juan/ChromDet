@@ -20,12 +20,22 @@ all:
 	cd ./cluster-1.49 && perl Makefile.PL
 	make -C cluster-1.49
 	
-	tar -jxvf boost_1_42_0a.tar.bz2
-	tar -jxvf boost_1_42_0b.tar.bz2
-	cd boost_1_42_0 && ./bootstrap.sh --prefix=../boost --with-libraries=regex
-	cd boost_1_42_0 && ./bjam install
-	cd boost_1_42_0/libs/regex/build && make -fgcc.mak
-	cd boost_1_42_0/libs/regex/build/gcc && ln -s libboost_regex-gcc-1_42.a libboost_regex.a
+#	tar -jxvf boost_1_42_0a.tar.bz2
+#	tar -jxvf boost_1_42_0b.tar.bz2
+	tar -jxvf boost_1_64_0a.tar.bz2
+	tar -jxvf boost_1_64_0b.tar.bz2
+	tar -jxvf boost_1_64_0c.tar.bz2
+	tar -jxvf boost_1_64_0d.tar.bz2
+
+#	cd boost_1_42_0 && ./bootstrap.sh --prefix=../boost --with-libraries=regex
+#	cd boost_1_42_0 && ./bjam install
+#	cd boost_1_42_0/libs/regex/build && make -fgcc.mak
+#	cd boost_1_42_0/libs/regex/build/gcc && ln -s libboost_regex-gcc-1_42.a libboost_regex.a
+
+	cd boost_1_64_0 && ./bootstrap.sh --prefix=../boost --with-libraries=regex
+	cd boost_1_64_0 && ./bjam install
+	cd boost_1_64_0/libs/regex/build && make -fgcc.mak
+	cd boost_1_64_0/libs/regex/build/gcc && ln -s libboost_regex-gcc-1_64.a libboost_regex.a
 
 	$(CC) -c -g Subset_library/subset.C -o Subset_library/subset.o
 
