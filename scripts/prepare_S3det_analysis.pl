@@ -1,4 +1,4 @@
-#!/opt/local/bin/perl
+#!/usr/bin/perl
 
 #This script transforms individual bedfiles containing genome segmentations for different samples in a fasta file and bedfile containing those regions suitable for S3det, a MCA-based approach for analysis of intersample epigenomic variability
 
