@@ -1,4 +1,4 @@
-#!/opt/local/bin/perl
+#!/usr/bin/perl
 
 #This script run an standard epigenomic S3det analysis. S3det is a MCA-based approach for analysis of intersample epigenomic variability. The expected input is a set of bed files containing chromatin states segmentations for different samples from different cell types of the same species. A number of options are available to help designing an experiment-specific analysis and to provide easy to interpret results. The expected output is a Chromatin Sample Space, reflecting the sample clustering and a list of Chromatin Determining Positions (CDRs) that are the major contributors to this sample clustering and therefore are expected to be important chromatin regions for defining the epigenomic framework characterizing every cluster in oposition to all the rest of the clusters.
 
