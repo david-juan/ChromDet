@@ -5,8 +5,6 @@ CC = g++
 LIBRARY =Newmat10D/libnewmat.a cluster-1.49/src/libcluster.a -L./boost/lib
 LIBRARY_STATIC=Newmat10D/libnewmat.a cluster-1.49/src/libcluster.a boost/lib/libboost_regex.a -static-libstdc++ -static-libgcc
 INCLUDE =-I./Newmat10D -I./Subset_library/ -I./boost/include
-LINK_DYNAMIC=-lm  -lboost_regex
-
 
 default: all
 
@@ -32,21 +30,17 @@ all:
 
 	$(CC) -c -g Subset_library/subset.C -o Subset_library/subset.o
 
-#	# STATIC COMPILATION
 	$(CC) -c S3det_for_Treedetserver_v2.2.cpp $(INCLUDE)
 	$(CC) -o S3det_v2.2.exe S3det_for_Treedetserver_v2.2.o ./Subset_library/subset.o -lm $(LIBRARY_STATIC) 
 
 	$(CC) -c MCdet_scores_v2.1.cpp $(INCLUDE)
 	$(CC) -o MCdet_v2.1.exe MCdet_scores_v2.1.o -lm $(LIBRARY_STATIC)
 
-#	# DYNAMIC COMPILATION
-#	 $(CC) -o S3det_v2.1.exe S3det_for_Treedetserver_v2.2.o ./Subset_library/subset.o -lm $(LIBRARY) $(LINK_DYNAMIC)
-#	 $(CC) -o MCdet_v2.1.exe MCdet_scores_v2.1.o -lm $(LIBRARY) $(LINK_DYNAMIC)
 
-# clean:
-# 	make clean -C cluster-1.49
-# 	make clean -C boost_1_42_0
-# 	cd Newmat10D && rm *.o && rm libnewmat.a
-# 	rm Subset_library/subset.o
-# 	rm S3det_v2.1.exe
-# 	rm MCdet_v2.1.exe
+clean:
+ 	make clean -C cluster-1.49
+ 	make clean -C boost_1_42_0
+ 	cd Newmat10D && rm *.o && rm libnewmat.a
+ 	rm Subset_library/subset.o
+ 	rm S3det_v2.1.exe
+ 	rm MCdet_v2.1.exe
