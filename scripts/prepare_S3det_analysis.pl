@@ -4,17 +4,15 @@
 
 use Getopt::Long;
 use Pod::Usage;
-use Statistics::R;
 use strict;
-#use warnings;
 
 =head1 NAME
 
-prepare_MCA_input.pl
+prepare_S3det_analysis.pl
 
 =head1 SYNOPSIS
 
-    Usage /path/to/prepare_MCA_input.pl [options] 
+    Usage /path/to/prepare_S3det_analysis.pl [options] 
 
      Options:
 	   -d		'bed_dir' [MANDATORY] directory containing the set of genome segmentations in bed format.
@@ -30,6 +28,7 @@ prepare_MCA_input.pl
 	   -b		'bedtools_dir' [OPTIONAL] path to bedtools (by default uses $PATH)
 	   -s		's3det_path' [OPTIONAL] path to S3det (by default uses $PATH)
 	   -f		's3det_opts'  [OPTIONAL] quotes delimited string character with the options used for S3det (default = "-v"). See S3det documentation for information about available options
+	   -v		displays messages to STDERR with real time information about pre-processing
 	   --help	prints this brief help message
 
 =head1 DESCRIPTION
@@ -64,7 +63,7 @@ $"="\t";
 
 my ($bed_dir,$beds_file,$opt_help,$bedtools_path,$command,$cnt,$pre_cnt,$header,$prev_chr,$prev_start,$prev_end,$prev_pattern,$prev_ok,$sample,$state,$collapsed_sample_filtered);
 my ($prev_ok_region,$min_states,$min_samples_states,$min_regions_pattern,$out_pre,$bedtools_path,$collapses_file,$original_state,$traslated_pattern,$pre_traslation);
-my (@AA,@tr,@tr2,@bed_files,@working_beds,@sample_names,@prev_ok_regions,@names,@seq,$i,@states);
+my (@AA,@tr,@tr2,@bed_files,@working_beds,@sample_names,@prev_ok_regions,@names,@seq,$i,@states,$verbose);
 my (%working_mnemo_bed_files,%states,%cont_patterns,%all_states,%states2code,%states_collapses,%pattern_collapse,%all_collapse_states);
 
 $min_states=2;
@@ -83,6 +82,7 @@ GetOptions (
 			'r=i' => \$min_regions_pattern,
 			'o=s' => \$out_pre,
 			'b=s' => \$bedtools_path,
+			'v!' => \$verbose,
 			'help!' =>  \$opt_help
 			) or pod2usage( "Try '$0 --help' for more information." ) && exit;
 
@@ -122,6 +122,7 @@ if($beds_file)
 	close BEDS_FILE;
 }
 $cnt=0;
+if($verbose){print STDERR "Step 1: Merging bedfiles. Be patient, this step can last a while depending on the number of bedfiles\n";}
 opendir BED_DIR, "$bed_dir" or die "I couldn't open $bed_dir directory\n";
 while(my $bed_file=readdir(BED_DIR))
 {
@@ -131,6 +132,7 @@ while(my $bed_file=readdir(BED_DIR))
 		{
 			$pre_cnt=$cnt;
 			$cnt++;
+			if($verbose){print STDERR "\tProcessing file $cnt: $bed_file\n";}
 			if(exists($working_mnemo_bed_files{$bed_file})){push @sample_names, $working_mnemo_bed_files{$bed_file};}
 			else{push @sample_names, $bed_file;}
 			if(!$command)
@@ -176,6 +178,8 @@ $header="\"#Chr\tStart\tEnd\t@sample_names\"";
 push @prev_ok_regions,"#Chr\tStart\tEnd\t@sample_names\n";
 system "echo $header > $bed_dir/$out_pre\_collapsed.tab;cat $bed_dir/tmp_$cnt >> $bed_dir/$out_pre\_collapsed.tab";
 system "rm $bed_dir/tmp_$cnt";
+
+if($verbose){print STDERR "Step 2: Filtering uninformative regions\n";}
 
 $cnt=0;
 $prev_ok=0;
@@ -269,6 +273,8 @@ for($i=0;$i<@states;$i++)
 	$states2code{$states[$i]}=$AA[$i];
 }
 
+if($verbose){print STDERR "Step 3: Writing genomic coordinates file ($bed_dir/$out_pre\_collapsed_filtered.tab) for informative regions\n";}
+
 open OUT_BED_FILE, ">$bed_dir/$out_pre\_collapsed_filtered.tab" or die "I couldn't open $bed_dir/$out_pre\_collapsed_filtered.tab\n";;
 foreach $prev_ok_region(@prev_ok_regions)
 {
@@ -293,7 +299,7 @@ foreach $prev_ok_region(@prev_ok_regions)
 close OUT_BED_FILE;
 
 
-
+if($verbose){print STDERR "Step 4: Writing fasta file ($bed_dir/$out_pre\_collapsed_filtered.fa) for feeding S3det\n";}
 open OUT_FASTA_FILE, ">$bed_dir/$out_pre\_collapsed_filtered.fa" or die "I couldn't open $bed_dir/$out_pre\_collapsed_filtered.fa\n";
 for($i=0;$i<@names;$i++)
 {
