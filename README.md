@@ -2,9 +2,9 @@
 A method to classify different cell types from their epigenomic profiles and detect genomic regions determining this classification.
 This repository contains a modified version of S3det (Rausell et al. PNAS 2010) adapted to perform epigenomic analyses of sample segregation into different cell types. It contains several scripts aimed to facilitate this analysis by providing an interface with S3det and retrieving understable output files containing the Chromatin Sample Space and the Chromatin Determining Regions (CDRs).
 
-## Instalation
+## Installation
 
-ChromDet is a software for UNIX/Linux systems.
+ChromDet has been tested on UNIX/Linux and MacOS systems.
 
 ### Directories
 
@@ -33,6 +33,21 @@ ChromDet is a software for UNIX/Linux systems.
 -  Bedfiles containing chromating states segmentations for the samples to analyse (nine examples at https://github.com/david-juan/ChromDet/tree/master/test/).
 -  Chromatin states collapses definition (an example at https://github.com/david-juan/ChromDet/tree/master/test/States_collapse.txt)
 -  Samples human readable names (an example at https://github.com/david-juan/ChromDet/tree/master/test/Samples_beds.tsv)
+
+#### Output Files
+
+##### Main output files
+
+- Chromatin space file. A tsv file containing the coordinates of the samples in the Chromatin Space, as well as to what cluster tehy belong
+- Chromatin Determinants Regions (CDRs) File. A tsv file containing the genomic coordinates of the CDRs, as well as to the split of which clusters they contribute and their pattern of collapsed chromatin states in the different samples.
+
+##### Other output files
+
+- Whole genome patterns of collapsed chromatin states. A tsv file containing the genomic coordinates of every region of the genome characterized by a different pattern of collapsed chromatin states along different samples than their neighbouring regions.
+- Filtered regions with patterns of collapsed chromatin states. A tsv containing the genomic coordinates of every region of the genome with a pattern of collapsed chromatin states along different samples considered informative.
+- Fasta file of the filtered regions with patterns of collapsed chromatin states. A fasta file, where regions with patterns of collapsed chromatin states along different samples are represented as gap-free aligned sequences of chromatin states for every sample.
+- S3det raw resuls. File with the raw output for S3det
+
 
 ### External software requirements
 
