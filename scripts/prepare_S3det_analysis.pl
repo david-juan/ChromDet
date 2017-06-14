@@ -122,7 +122,7 @@ if($beds_file)
 	close BEDS_FILE;
 }
 $cnt=0;
-if($verbose){print STDERR "Step 1: Merging bedfiles. Be patient, this step can last a while depending on the number of bedfiles\n";}
+if($verbose){print STDERR "PREPARING - Step 1: Merging bedfiles. Be patient, this step can last a while depending on the number of bedfiles\n";}
 opendir BED_DIR, "$bed_dir" or die "I couldn't open $bed_dir directory\n";
 while(my $bed_file=readdir(BED_DIR))
 {
@@ -179,7 +179,7 @@ push @prev_ok_regions,"#Chr\tStart\tEnd\t@sample_names\n";
 system "echo $header > $bed_dir/$out_pre\_collapsed.tab;cat $bed_dir/tmp_$cnt >> $bed_dir/$out_pre\_collapsed.tab";
 system "rm $bed_dir/tmp_$cnt";
 
-if($verbose){print STDERR "Step 2: Filtering uninformative regions\n";}
+if($verbose){print STDERR "PREPARING - Step 2: Filtering uninformative regions\n";}
 
 $cnt=0;
 $prev_ok=0;
@@ -273,7 +273,7 @@ for($i=0;$i<@states;$i++)
 	$states2code{$states[$i]}=$AA[$i];
 }
 
-if($verbose){print STDERR "Step 3: Writing genomic coordinates file ($bed_dir/$out_pre\_collapsed_filtered.tab) for informative regions\n";}
+if($verbose){print STDERR "PREPARING - Step 3: Writing genomic coordinates file ($bed_dir/$out_pre\_collapsed_filtered.tab) for informative regions\n";}
 
 open OUT_BED_FILE, ">$bed_dir/$out_pre\_collapsed_filtered.tab" or die "I couldn't open $bed_dir/$out_pre\_collapsed_filtered.tab\n";;
 foreach $prev_ok_region(@prev_ok_regions)
@@ -299,7 +299,7 @@ foreach $prev_ok_region(@prev_ok_regions)
 close OUT_BED_FILE;
 
 
-if($verbose){print STDERR "Step 4: Writing fasta file ($bed_dir/$out_pre\_collapsed_filtered.fa) for feeding S3det\n";}
+if($verbose){print STDERR "PREPARING - Step 4: Writing fasta file ($bed_dir/$out_pre\_collapsed_filtered.fa) for feeding S3det\n";}
 open OUT_FASTA_FILE, ">$bed_dir/$out_pre\_collapsed_filtered.fa" or die "I couldn't open $bed_dir/$out_pre\_collapsed_filtered.fa\n";
 for($i=0;$i<@names;$i++)
 {

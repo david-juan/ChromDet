@@ -111,7 +111,7 @@ $run_command = qq [$current_dir/S3det_interface.pl -d $abs_bed_dir -f $out_pre\_
 if($verbose)
 {
 	$run_command.= " -v";
-	print STDERR "Running $run_command\n";
+	print STDERR "\nRunning $run_command\n";
 }
 
 system "$run_command";
