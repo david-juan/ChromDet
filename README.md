@@ -46,7 +46,7 @@ ChromDet is a software for UNIX/Linux systems.
 
 #### 2) Run the complete analysis (minimal)
 
--  ./run_S3det_analysis -b <dir containing the bedfiles>
+-  ./run_S3det_analysis -b \<dir containing the bedfiles\>
 
 ### 3) Run the complete analysis (recommended)
 
@@ -54,4 +54,4 @@ ChromDet is a software for UNIX/Linux systems.
 
 #### Toy Example
 
--  ./run_S3det_analysis -b ../test/ -c ../test/States_collapse.txt -a Samples_beds.tsv
+-  ./run_S3det_analysis -b ../test/ -c ../test/States_collapse.txt -a ../test/Samples_beds.tsv -s ../S3Det_modified/ -v
