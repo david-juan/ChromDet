@@ -607,10 +607,16 @@ if(Verbose=="YES"){
 	fs << "Axes\t1st\t2nd\t3rd\t4th\t5th\t6th\t7th\t8th\t9th\t10th" << endl;
 	for (int i=0; i<Column_Coordinates.Nrows();i++){
 		fs << "ResCoord:" << "\t" << position_aminoacid_vector.at(i) << "\t";
-		for (int j=Column_Coordinates.Ncols()-1;j>Column_Coordinates.Ncols()-1-9; j--){
+		for (int j=Column_Coordinates.Ncols()-1;j>Column_Coordinates.Ncols()-1-9 && j>0; j--){
 			fs << Column_Coordinates[i][j] << "\t";
 		}
-		fs << Column_Coordinates[i][Column_Coordinates.Ncols()-1-9] << endl;
+		if(Column_Coordinates.Ncols()>8)
+		{
+			fs << Column_Coordinates[i][Column_Coordinates.Ncols()-1-9] << endl;
+		}else
+		{
+			fs << Column_Coordinates[i][0] << endl;
+		}
 	}
 	fs << endl;
 }
@@ -1565,7 +1571,7 @@ int number_of_Conserved_positions=Conserved_positions.size();
 if(number_of_Conserved_positions==0){
 	fs << "NO" << endl;
 	fs << "UI: There are no conserved positions at "<< conservation_threshold <<" % of identity" << endl;
-	return 0;
+//	return 0;
 }
 else{fs << "YES" << endl;}
 // sort(Conserved_positions.begin(),Conserved_positions.end());
