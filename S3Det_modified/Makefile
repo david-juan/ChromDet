@@ -39,7 +39,7 @@ all:
 
 clean:
  	make clean -C cluster-1.49
- 	make clean -C boost_1_42_0
+ 	make clean -C boost_1_64_0
  	cd Newmat10D && rm *.o && rm libnewmat.a
  	rm Subset_library/subset.o
  	rm S3det_v2.1.exe
