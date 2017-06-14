@@ -17,7 +17,7 @@ ChromDet has been tested on UNIX/Linux and MacOS systems.
 #### 1) Download ChromDet (https://github.com/david-juan/ChromDet/archive/master.zip)
 
 #### 2) Uncompress ChromDet
--  ./unzip ChromDet.zip
+-  ./unzip ChromDet-master.zip
 
 #### 3) Install S3det
 -  cd ChromDet/S3Det_modified/
