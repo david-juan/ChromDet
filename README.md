@@ -61,12 +61,12 @@ ChromDet has been tested on UNIX/Linux and MacOS systems.
 
 #### 2) Run the complete analysis (minimal)
 
--  ./run_S3det_analysis -d \<dir containing the bedfiles\>
+-  ./run_S3det_analysis.pl -d \<dir containing the bedfiles\>
 
 ### 3) Run the complete analysis (recommended)
 
-- ./run_S3det_analysis -d \<dir containing the bedfiles\> -c \<file with the equivalences between chromatin states and their collapse\> -a \<file with human meaningful names for the samples\> -v
+- ./run_S3det_analysis.pl -d \<dir containing the bedfiles\> -c \<file with the equivalences between chromatin states and their collapse\> -a \<file with human meaningful names for the samples\> -v
 
 #### Toy Example
 
--  ./run_S3det_analysis -d ../test/ -c ../test/States_collapse.txt -a ../test/Samples_beds.tsv -s ../S3Det_modified/ -v
+-  ./run_S3det_analysis.pl -d ../test/ -c ../test/States_collapse.txt -a ../test/Samples_beds.tsv -s ../S3Det_modified/ -v
