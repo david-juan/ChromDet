@@ -43,7 +43,7 @@ ChromDet has been tested on UNIX/Linux and MacOS systems.
 
 ##### Other output files
 
-- Whole genome patterns of collapsed chromatin states. A tsv file containing the genomic coordinates of every region of the genome characterized by a different pattern of collapsed chromatin states along different samples than their neighbouring regions.
+- Whole genome patterns of original chromatin states. A tsv file containing the genomic coordinates of every region of the genome characterized by a different pattern of collapsed chromatin states along different samples than their neighbouring regions.
 - Filtered regions with patterns of collapsed chromatin states. A tsv containing the genomic coordinates of every region of the genome with a pattern of collapsed chromatin states along different samples considered informative.
 - Fasta file of the filtered regions with patterns of collapsed chromatin states. A fasta file, where regions with patterns of collapsed chromatin states along different samples are represented as gap-free aligned sequences of chromatin states for every sample.
 - S3det raw resuls. File with the raw output for S3det
