@@ -22,6 +22,7 @@ run_S3det_analysis.pl
 	 			In case this file is not provided, all bed file in 'bed_dir' will be used.
 	   -c		'state_collapses_file' [OPTIONAL] two-column tabular file containg equivalences between each chromatin state present in the genome segmentations and collapsed states.
 	 			Collapses are recommended to be based on their shared biological role (eg. different states replecting enhancers).
+	   -h		'T/F' [OPTIONAL] 'T' for selecting only autosomal chromosomes. 'F' for using all chromosomes (default=T)
 	   -n		'min_num_states' [OPTIONAL] minimum number of states found in a region along all the samples (default value = 2)
 	   -m		'min_num_samples_per_state' [OPTIONAL] minimum number of samples with an state to be considered in filtering (see -n; default value = 2)
 	   -r		'min_num_regions_pattern' [OPTIONAL] minimal number of regions with the same pattern of states along the samples to be included in the analysis (default value = 10)
@@ -64,7 +65,7 @@ $"="\t";
 
 my ($bed_dir,$beds_file,$opt_help,$bedtools_path,$command,$cnt,$pre_cnt,$header,$prev_chr,$prev_start,$prev_end,$prev_pattern,$prev_ok,$sample,$state,$collapsed_sample_filtered);
 my ($prev_ok_region,$min_states,$min_samples_states,$min_regions_pattern,$out_pre,$bedtools_path,$collapses_file,$original_state,$traslated_pattern,$current_dir);
-my ($pre_s3det_opts,$s3det_path,$verbose,$pre_command,$abs_bed_dir,$run_command);
+my ($pre_s3det_opts,$s3det_path,$verbose,$pre_command,$abs_bed_dir,$run_command,$autosomal);
 my (@AA,@tr,@tr2,@bed_files,@working_beds,@sample_names,@prev_ok_regions,@names,@seq,$i,@states);
 my (%working_mnemo_bed_files,%states,%cont_patterns,%all_states,%states2code,%states_collapses,%pattern_collapse,%all_collapse_states);
 
@@ -74,11 +75,13 @@ my (%working_mnemo_bed_files,%states,%cont_patterns,%all_states,%states2code,%st
 $out_pre="samples";
 #$bedtools_path='';
 $s3det_path="./";
+$autosomal='T';
 # Get commandline arguments
 GetOptions (
 			'd=s' => \$bed_dir,
 			'a=s' => \$beds_file,
 			'c=s' => \$collapses_file,
+			'h=s' => \$autosomal,
 			'n=i' => \$min_states,
 			'm=i' => \$min_samples_states,
 			'r=i' => \$min_regions_pattern,
@@ -92,6 +95,7 @@ GetOptions (
 
 pod2usage( -verbose => 2 ) if $opt_help || !$bed_dir;
 
+$autosomal=uc($autosomal);
 $pre_command = "./prepare_S3det_analysis.pl -d $bed_dir";
 if($beds_file){$pre_command .=" -a $beds_file";}
 if($collapses_file){$pre_command .=" -c $collapses_file";}
@@ -100,6 +104,7 @@ if($min_samples_states){$pre_command .=" -m $min_samples_states";}
 if($min_regions_pattern){$pre_command .=" -r $min_regions_pattern";}
 if($out_pre){$pre_command .=" -o $out_pre";}
 if($bedtools_path){$pre_command .=" -b $bedtools_path";}
+if($autosomal != 'T'){$pre_command .=" -h $autosomal";}
 if($verbose){$pre_command .=" -v";}
 
 if($verbose){print STDERR "Running $pre_command\n";}

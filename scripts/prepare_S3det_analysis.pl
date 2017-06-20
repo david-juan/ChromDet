@@ -21,13 +21,12 @@ prepare_S3det_analysis.pl
 	 			In case this file is not provided, all bed file in 'bed_dir' will be used.
 	   -c		'state_collapses_file' [OPTIONAL] two-column tabular file containg equivalences between each chromatin state present in the genome segmentations and collapsed states.
 	 			Collapses are recommended to be based on their shared biological role (eg. different states replecting enhancers).
+	   -h		'T/F' [OPTIONAL] 'T' for selecting only autosomal chromosomes. 'F' for using all chromosomes (default=T)
 	   -n		'min_num_states' [OPTIONAL] minimum number of states found in a region along all the samples (default value = 2)
 	   -m		'min_num_samples_per_state' [OPTIONAL] minimum number of samples with an state to be considered in filtering (see -n; default value = 2)
 	   -r		'min_num_regions_pattern' [OPTIONAL] minimal number of regions with the same pattern of states along the samples to be included in the analysis (default value = 10)
 	   -o		'output_prefix' [OPTIONAL] prefix added to the output files (default = "collapsed_samples")
 	   -b		'bedtools_dir' [OPTIONAL] path to bedtools (by default uses $PATH)
-	   -s		's3det_path' [OPTIONAL] path to S3det (by default uses $PATH)
-	   -f		's3det_opts'  [OPTIONAL] quotes delimited string character with the options used for S3det (default = "-v"). See S3det documentation for information about available options
 	   -v		displays messages to STDERR with real time information about pre-processing
 	   --help	prints this brief help message
 
@@ -62,21 +61,24 @@ $"="\t";
 
 
 my ($bed_dir,$beds_file,$opt_help,$bedtools_path,$command,$cnt,$pre_cnt,$header,$prev_chr,$prev_start,$prev_end,$prev_pattern,$prev_ok,$sample,$state,$collapsed_sample_filtered);
-my ($prev_ok_region,$min_states,$min_samples_states,$min_regions_pattern,$out_pre,$bedtools_path,$collapses_file,$original_state,$traslated_pattern,$pre_traslation);
-my (@AA,@tr,@tr2,@bed_files,@working_beds,@sample_names,@prev_ok_regions,@names,@seq,$i,@states,$verbose);
-my (%working_mnemo_bed_files,%states,%cont_patterns,%all_states,%states2code,%states_collapses,%pattern_collapse,%all_collapse_states);
+my ($prev_ok_region,$min_states,$min_samples_states,$min_regions_pattern,$out_pre,$bedtools_path,$collapses_file,$original_state,$traslated_pattern,$pre_traslation,$verbose);
+my ($number,$pattern_num,$prev_pattern_num,$autosomal);
+my (@AA,@tr,@tr2,@bed_files,@working_beds,@sample_names,@prev_ok_regions,@names,@seq,$i,@states,@numbers);
+my (%working_mnemo_bed_files,%states,%cont_patterns,%all_states,%states2code,%states_collapses,%pattern_collapse,%all_collapse_states,%state_number);
 
 $min_states=2;
 $min_samples_states=2;
 $min_regions_pattern=10;
 $out_pre="samples";
 $bedtools_path='';
+$autosomal='T';
 @AA=('K','V','g','i','j','k','l','m','n','A','B','C','D','E','F','G','H','I','J','L','M','N','O','P','Q','R','S','T','U','W','X','Y','Z','a','b','c','d','e','f','h');
 # Get commandline arguments
 GetOptions (
 			'd=s' => \$bed_dir,
 			'a=s' => \$beds_file,
 			'c=s' => \$collapses_file,
+			'h=s' => \$autosomal,
 			'n=i' => \$min_states,
 			'm=i' => \$min_samples_states,
 			'r=i' => \$min_regions_pattern,
@@ -87,7 +89,7 @@ GetOptions (
 			) or pod2usage( "Try '$0 --help' for more information." ) && exit;
 
 pod2usage( -verbose => 2 ) if $opt_help || !$bed_dir;
-
+$autosomal=uc($autosomal);
 if($min_states>0)
 {
 	$min_states--;
@@ -174,8 +176,8 @@ if($collapses_file)
 
 
 $"="|";
-$header="\"#Chr\tStart\tEnd\t@sample_names\"";
-push @prev_ok_regions,"#Chr\tStart\tEnd\t@sample_names\n";
+$header="\"#Chr\tStart\tEnd\t@sample_names\t@sample_names\"";
+push @prev_ok_regions,"#Chr\tStart\tEnd\t@sample_names\t@sample_names\n";
 system "echo $header > $bed_dir/$out_pre\_collapsed.tab;cat $bed_dir/tmp_$cnt >> $bed_dir/$out_pre\_collapsed.tab";
 system "rm $bed_dir/tmp_$cnt";
 
@@ -188,6 +190,7 @@ while(<COLLAPSED_FILE>)
 {
 	chomp;
 	@tr=split /\t/;
+	if($autosomal == 'T' && !/^\#/ && $tr[0] !~ /chr\d\d*$/){next;}
 	if($collapses_file)
 	{
 		if(!/^\#/ && !exists($pattern_collapse{$tr[3]}))
@@ -214,30 +217,37 @@ while(<COLLAPSED_FILE>)
 		else{next;}
 	}else
 	{
+		@tr2=split/\|/,$tr[3];
+		undef %state_number;
+		$number=0;
+		undef @numbers;
+		undef %states;
+		foreach (@tr2)
+		{
+			if(!exists($state_number{$_})){$number++;$state_number{$_}=$number;}
+			$states{$_}++;
+			push @numbers, $state_number{$_};
+		}
+		$"="|";
+		$pattern_num="@numbers";
 		if($prev_ok)
 		{
-			push @prev_ok_regions, "$prev_chr\t$prev_start\t$prev_end\t$prev_pattern";
+			push @prev_ok_regions, "$prev_chr\t$prev_start\t$prev_end\t$prev_pattern\t$prev_pattern_num";
 		}
 		$prev_ok=0;
-
-		if($cont_patterns{$tr[3]}>$min_regions_pattern)
+		if($cont_patterns{$pattern_num}>$min_regions_pattern)
 		{
 			$prev_ok=1;
 			$prev_chr=$tr[0];
 			$prev_start=$tr[1];
 			$prev_end=$tr[2];
 			$prev_pattern=$tr[3];
-			$cont_patterns{$tr[3]}++;
+			$prev_pattern_num=$pattern_num;
+			$cont_patterns{$pattern_num}++;
 			next;
 		}
 		if(!/\#/)
 		{
-			@tr2=split/\|/,$tr[$#tr];
-			undef %states;
-			foreach $sample(@tr2)
-			{
-				$states{$sample}++;
-			}
 			$cnt=0;
 			foreach $state(keys(%states))
 			{
@@ -258,7 +268,8 @@ while(<COLLAPSED_FILE>)
 			$prev_start=$tr[1];
 			$prev_end=$tr[2];
 			$prev_pattern=$tr[3];
-			$cont_patterns{$tr[3]}++;
+			$prev_pattern_num=$pattern_num;
+			$cont_patterns{$pattern_num}++;
 		}else
 		{
 			$prev_ok=0;
@@ -286,7 +297,7 @@ foreach $prev_ok_region(@prev_ok_regions)
 		@names=split/\|/,$tr[$#tr];
 		next;
 	}
-	if($cont_patterns{$tr[3]}>$min_regions_pattern)
+	if($cont_patterns{$tr[4]}>$min_regions_pattern)
 	{
 		print OUT_BED_FILE "$prev_ok_region\n";
 		@tr=split/\|/,$tr[3];
