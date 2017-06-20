@@ -106,7 +106,7 @@ if($fasta_file && $index_file)
 	{
 		$s3det_file=$out_pre.".s3";
 	}
-	if($verbose){print STDERR "RUNNING - Step 1: Running $s3det_path/S3det_v1.2.exe -i $run_dir/$fasta_file -o $run_dir/$s3det_file $s3det_opts\n";}
+	if($verbose){print STDERR "RUNNING - Step 1: Running $s3det_path/S3det_v2.2.exe -i $run_dir/$fasta_file -o $run_dir/$s3det_file $s3det_opts\n";}
 	if(!system "cd $s3det_path;./S3det_v2.2.exe -i $run_dir/$fasta_file -o $run_dir/$s3det_file $s3det_opts")
 	{
 	
