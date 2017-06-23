@@ -1,6 +1,6 @@
 # ChromDet
 A method to classify different cell types from their epigenomic profiles and detect genomic regions determining this classification.
-This repository contains a modified version of S3det (Rausell et al. PNAS 2010) adapted to perform epigenomic analyses of sample segregation into different cell types. It contains several scripts aimed to facilitate this analysis by providing an interface with S3det and retrieving understable output files containing the Chromatin Sample Space and the Chromatin Determining Regions (CDRs).
+This repository contains a modified version of S3det (Rausell et al. PNAS 2010) adapted to perform epigenomic analyses of sample segregation into different cell types. These modifications include an update to the boost library v1.64 (http://www.boost.org/), a more informative verbose output, and minor bug fixing. It also contains several scripts aimed to facilitate this analysis by providing an interface with S3det and retrieving easy to use output files containing the obtained Chromatin Sample Space and the Chromatin Determining Regions (CDRs).
 
 ## Installation
 
