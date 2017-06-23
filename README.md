@@ -70,3 +70,8 @@ ChromDet has been tested on UNIX/Linux and MacOS systems.
 #### Toy Example
 
 -  ./run_S3det_analysis.pl -d ../test/ -c ../test/States_collapse.txt -a ../test/Samples_beds.tsv -s ../S3Det_modified/ -v
+
+## How to cite
+
+Automatic identification of informative regions with epigenomic changes associated to hematopoiesis 
+Enrique Carrillo de Santa Pau, David Juan, Vera Pancaldi, Felipe Were, Jose Ignacio Martin-Subero, Daniel Rico, Alfonso Valencia bioRxiv 082917; doi: https://doi.org/10.1101/082917
