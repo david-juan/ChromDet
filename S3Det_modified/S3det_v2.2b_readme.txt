@@ -1,0 +1,520 @@
+
+                               S 3 d e t
+
+                                v 2.2 
+
+                  A. Rausell, D. Juan & A. Valencia
+
+                                 -o-
+
+
+Information
+===========
+
+S3det implements a method for detecting both subfamilies and positions with a "subfamily-dependent"
+conservation pattern (SDPs, Specificity Determining Positions) in multiple sequence alignments.
+These subfamilies and their corresponding SDPs have been shown to be related to functional
+specificity, and they complement the fully conserved positions as predictors of functionality
+from sequence information.
+
+S3det is based on a vectorial representation of the MSA in a high dimensional space. A
+reduction of this space by Multiple Correspondence Analysis (Greenacre, 1984) produces a
+low dimensional space preserving most of the original information but filtering main sources
+of noise. Similar sequences will cluster together in similar regions of this
+reduced space. A similar vectorial treatment for the individual positions (instead of 
+full-length sequences) produces an equivalent space where the positions with most of the 
+information for explaining the separation of the subfamilies go to the same regions of the
+space where these subfamilies are.
+
+The selection of the optimal number of reduced dimensions to be kept is a crucial step to
+strike the most favourable balance between relevant and noisy information. This is a main
+advantage of multivariate approaches. S3det makes use of the non-parametric Wilcoxon Rank
+Sum Test (Miller & Miller, 1998) to assess the statistical confidence of each dimension for
+being informative.
+
+Once both sequences and positions spaces have been optimally decomposed in their main relevant
+sources of variation, S3det supplies, by means of an unsupervised k-means clustering algorithm,
+an automated identification of the putative groups of sequences that will be regarded as different
+functional subfamilies within the MSA.
+
+After these sequence subfamilies have been established, they are linked with the positions space
+in order to automatically assign the set of positions that uniquely characterizes each group.
+Thereafter, SDPs are predicted as those positions whose positions characterize a number of
+groups spanning the whole alignment (these groups being either isolated subfamilies or merged
+ones). SDPs are considered as the functional specificity determinining positions within the
+sequence family.
+
+
+The original "S3det-method" is described in:
+
+* Antonio Rausell, David Juan, Florencio Pazos & Alfonso Valencia. (2010).
+  Protein interactions and ligand binding: from protein subfamilies to functional specificity.
+  Proc Natl Acad Sci U S A. 2010 Feb 2;107(5):1995-2000. Epub 2010 Jan 19
+
+Please, cite this reference when reporting any result obtained using
+this program.
+
+
+S3det Software License - Version 2.2 - Sep 8th, 2010
+====================================================
+I place no restrictions on the use of S3det and MCdet except that I take no liability for any
+problems that may arise from its use, distribution or other dealings with it. You can use it
+for academic purposes and in commercial projects. You can make and distribute modified
+or merged versions. You can include parts of it in your own software. If you distribute modified
+or merged versions, please make it clear which parts are mine and which parts are modified. For
+a substantially modified version, simply note that it is, in part, derived from my software. A
+comment in the code will be sufficient.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE AND
+NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE
+LIABLE FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Please understand that there may still be bugs and errors. Use at your own risk. I (Antonio Rausell)
+take no responsibility for any errors or omissions in this package or for any misfortune that may
+befall you or others as a result of your use, distribution or other dealings with it.
+
+Note: (by David Juan - Jun 20th, 2017)
+======================
+I have introduced several minor modifications in order to update this software, provide
+more informative verbose output and to solve some minor bugs. Since the publication of the original
+paper we have shown the versatility of this approach and its utility in the analysis of different
+types of information. In particular, current version is suitable for analysing protein families 
+(Rausell A et al. 2010), Microarray data (Martinez-Garcia R et al 2014) and whole genome epigenomic
+data (Carrillo-de-Santa-Pau E, Juan D et al. 2017).
+
+
+Third-party Libraries 
+=====================
+S3det makes use of the third-party libraries that are listed at the end of this document together with
+their respective disclaimers and conditions of use. All of them are included in the S3det distribution,
+which is done in compliance with their correpondince license.
+
+
+Setting up and Using the program
+================================
+
+The program is distributed as executable files for UNIX-based OSs (Linux and Mac OS) and Windows.
+We will refer here to the executable file with the generic name: "S3det_v2.2.exe"
+Together with the executable file, the distribution includes the following files:
+
+S3det_Wilcoxon_test.R
+conf.h
+S3det_v2.2_readme.txt (THIS FILE)
+
+You have to edit the file  "conf.h" in order to customize the following parameters:
+
+*Directory where temporary files created during the execution of S3det program will be hosted. Caution: keep this directory alive.
+*Directory where S3det_Wilcoxon_test.R file is hosted
+*Path for calling R from the S3det program
+
+WARNING:
+The conf.h file has to be hosted in the same directory as S3det_v2.2.exe
+
+CAUTION:
+S3det requires R-package to be installed
+Download and install  R from http://www.r-project.org/
+
+-----------------------------------------------------------------------------
+
+** Usage:  ./S3det_v2.2.exe -i aln_file(FASTA) -o output_file (plus optional arguments)
+
+   Required arguments: 
+
+     -i   infile                   Multiple Sequence Alignment in fasta format
+     -o   outfile                  Text file where program output will be printed
+
+   Optional arguments regarding the analysis variants
+
+     -f   Function coding file     Text file where a binary matrix codes for a super-
+                                     vised classification.                           
+                                     Default value is unsupervised                   
+
+   Optional arguments regarding the processing of the Multiple sequence alignment:
+
+     -g   % of gaps                Columns with a number of gaps greater than this
+                                     value are considered gappy columns and disregarded
+                                     from the analysis
+                                     Default value is 10
+
+     -s   % of similarity          Sequences with a similarity to anyother less than
+          (for outliers)             this value are considered outliers and disregarded
+                                     from the analysis
+                                     Default value is 40
+
+   Optional arguments regarding the prediction of Specificity Determining Positions:
+
+     -r   % of positions            Percentage ofpositiones whithin those attributed
+                                     to each sequence cluster (or its combinations)
+                                     that is considered when predicting SDPs
+                                     Default value is 10
+
+     -c   Average rank cut-off     Maximum average rank for a position being
+                                     considered as Specificity Determining (SDP)
+                                     Default value is 10
+
+     -m   Minimum group size       Groups with a number of sequences less than this
+                                     value are disregarded when predinting SDPs
+                                     (but not in clustering output)
+                                     Default value is 3
+
+   Optional arguments regarding the unsupervised k-means clustering process:
+
+     -k   Fixed number of groups   Integer value representing a fixed number of groups
+                                     upon which the k-means clustering will be performed
+
+     -n   Number of iterationsps   Integer value representing the number of times the
+          in k-means algorithm       Expectation-Maximization algorithm performing
+                                     k-means clustering should be run
+                                     Default value is (number_of_sequences*10) with a minimum of 500
+
+   Optional arguments regarding the selection of the number of axes:
+
+     -w   Wilcoxon cut-off         The last axis fulfiling the chosen cut-off will
+                                     be selected
+                                     Default value is 0.01
+
+     -x   Fixed number of axes     Integer value representing a fixed number of axes
+                                     upon which the analysis will be performed.
+                                     In such a case no selection of the number of
+                                     informative axes (nor Wilcoxon test) will be done
+
+   Other optional arguments:
+
+     -v   (Verbose)                Prints all additional outputs
+
+
+
+The input for the program is a multiple sequence alignment in FASTA format. There is not
+a minimum number of sequences and/or positions for the program to run, but it is
+recommended having at least 12 sequences and 25 non gappy positions, with enough functional
+diversity between them. An example can be seen in the attached "S3det_example.fasta" file
+
+The results of the program TOTALLY depend on the multiple sequence alignment used. S3det
+implements 2 options to filter gappy columns and outliers sequences. For example, the syntaxis
+to filter columns with more than 20% of gaps and sequences with a similarity to anyother less
+than 35% would be the following:
+>./S3det_v2.2.exe -i aln_file(FASTA) -o output_file -g 20 -s 35
+However, S3det doesn't perform any sequence redundancy filtering, and this should be previously
+considered by the user. In case the user has not an own criteria, the recomended value for
+running S3det is 95% of sequence redundancy filtering.
+
+S3det can also deal with an external functional binary classification, instead of performing
+an automatic clustering of the sequences. In this case, an external functional classification
+has to be provided in the form of a matrix of "functional binary membership" between sequences
+(by rows) and functions (by columns). The format of this file can be seen in the attached
+"s3det_example.func" file. The first line contains the name of the functions to be studied, separated
+by <TAB>. Following lines code in a binary way the presence (1) or absence (0) of the corresponding
+function column for every sequence in the alignment. CAUTION: Every sequence has to be assigned
+to some function. NOTICE: FUZZY CODING is accepted, that is, coding the sequence's membership
+of a given function with a number between "0" and "1" (e.g. "0.25"). This allows you to provide
+a certain probability of membership. In case of fuzzy coding, a given sequence should belong to
+more than one function in such a way that the sum of its values is "1"(e.g. 0.25 for function_A,
+0.75 for function_B and 0 for function_C). WARNING: missing values are not accepted. The syntaxis
+to run a supervised analysis should include the "-f" option, eg:
+>./S3det_v2.2.exe -i aln_file(FASTA) -o output_file -f function_file
+
+
+
+
+Output description
+==================
+
+The S3det output has been designed to be at a time both human and machine readable easily.
+Several examples are provided in XXX/XXX. 
+To parse the output in order to obtain subfamilies, type in shell
+
+> grep "^CL:" output_file
+
+And tou obtain a list with the following fields:
+			CL:
+			<WHITE_SPACE>
+			Name_of_sequence
+			<TAB>
+			Number_of_group (integer value starting at 1)
+			<END_OF_LINE>
+For instance:
+CL: MDH-ECO57|-1.1.1.37|PF00056 3
+CL: MDH-HAEDU|-1.1.1.37|PF00056 3
+CL: MDHC-YEAST|-1.1.1.37|PF00056        3
+CL: MDHC-MEDSA|-1.1.1.37|PF00056        2
+CL: MDHC-PIG|-1.1.1.37|PF00056  2
+CL: MDHC-ECHGR|-1.1.1.37|PF00056        2
+CL: MDH-XANCP|-1.1.1.37|PF00056 2
+CL: MDH-CHLMU|-1.1.1.37|PF00056 2
+CL: MDH-CHLCV|-1.1.1.37|PF00056 2
+CL: LDHB-FUNHE|-1.1.1.27|PF00056        1
+CL: LDHA-HARAN|-1.1.1.27|PF00056        1
+CL: LDH6B-HUMAN|-1.1.1.27|PF00056       1
+CL: LDH-DROME|-1.1.1.27|PF00056 1
+CL: LDH-MAIZE|-1.1.1.27|PF00056 1
+
+To parse the output to obtain the SDPs, type in shell
+
+> grep "^RE:" output_file
+
+And you obtain a list with the following fields:
+			RE:
+			<WHITE_SPACE>
+			Position_in_the_original_alignment
+			<TAB>
+			Average_rank
+			<TAB>
+			Number_of_groups_within_the_complete_partition
+			<TAB>
+			Partition_based_on:
+			<WHITE_SPACE>
+			List_of_clusters(rank_within_cluster) separated by <WHITE_SPACE>
+
+For instance
+	RE: 103	1	2	Partition_based_on: Cluster_2(rank:1) Cluster_1_3(rank:1)
+	RE: 152	1	2	Partition_based_on: Cluster_1(rank:1) Cluster_2_3(rank:1)
+	RE: 21	1.7	3	Partition_based_on: Cluster_1(rank:1) Cluster_2(rank:3) Cluster_3(rank:1)
+	RE: 147	2.5	2	Partition_based_on: Cluster_3(rank:4) Cluster_1_2(rank:1)
+	RE: 14	3	3	Partition_based_on: Cluster_1(rank:1) Cluster_2(rank:1) Cluster_3(rank:7)
+
+
+The complete set of labels used in order to parse the output are
+
+II: Internal Information
+UI: User Information
+OUT: Name of outlier sequence
+SC: Stable Clusters
+    If (SC=="NO") -> "UI: No stable cluster results have been found: Best solution found only 'x' times out of 'y' iterations searching for 'z' groups" (and program ends)
+GD: Group diversity.
+    If (GD=="NO") -> "UI: There is not enough group diversity to perform the analysis" (and program ends)
+CL: Line belonging to clustering of sequencies (subfamilies): Names and (int) values starting in "1"
+PR: Any SDP? 
+    If(PR=="NO")  -> "UI: There are no positions predicted to be important for the group segregation" (and program ends)
+RE: SDPs predicted and the corresponding list of subfamilies groupings upon which they are based
+CN: Any conserved position?
+    If(CN=="NO")  -> "UI: There are no conserved positions at conservation_threshold % of identity"
+CP: Conserved positions
+
+
+Additionally, if program is executed using the verbose option (-v) -for instance:
+./S3det_v2.2.exe -i aln_file(FASTA) -o output_file -v
+a number of (hopefully self explaining) additional outputs for expert users will be printed.
+
+An example can be seen in the attached "S3det_example.output_unsupervised" and "S3det_example.output_supervised" files:
+
+Example
+========
+
+./S3det_v2.2.exe -i S3det_example.fasta -o S3det_example.output_unsupervised 
+./S3det_v2.2.exe -i S3det_example.fasta -o S3det_example.output_supervised -f S3det_example.func 
+--
+
+==================
+For advanced users 
+==================
+
+Advance users can run S3det using "-v" verbose option and use the following "labes" to parse the output with grep:
+
+	SeqCoord  : Sequence Coordinates in 1st to 10th principal axes
+	ResCoord  : Position-AminoAcid Coordinates in 1st to 10th principal axes
+	ClusCoord : Cluster-Center-of-masses Coordinates in 1st to 10th principal axes
+	CS        : All alternative clustering solutions consistently found
+	RCS       : Summary of the number of positions assigned to a cluster
+	RCL       : positions selected as specific for a given cluster of sequences (SDPs will be calculated based on these lists)
+	RCM       : Matrix summarizing for each position in the alignment the ranking of their positions for each cluster
+
+Examples:
+
+> grep "^SeqCoord" output_file
+                SequenceName	Axes: 1st     2nd     3rd     4th    É
+SeqCoord:       MDH-ECO57|-1.1.1.37|PF00056     -0.201625       -0.798616       0.409878    É
+SeqCoord:       MDH-MANSM|-1.1.1.37|PF00056     -0.183325       -0.769218       0.378908    É
+SeqCoord:       MDH-HAEDU|-1.1.1.37|PF00056     -0.186765       -0.727463       0.465886    É
+SeqCoord:       MDHM-YEAST|-1.1.1.37|PF00056    -0.155605       -0.764142       0.114687    É
+SeqCoord:       MDHM-BRANA|-1.1.1.37|PF00056    -0.249334       -0.830403       0.077421    É
+
+>grep "^ResCoord"  output_file
+                Position/Aminoacid	Axes: 1st     2nd     3rd     4th    É
+ResCoord:       1/A     -0.271303       -1.31185        -0.185996    É
+ResCoord:       1/R     -0.327229       -1.21462        0.142536    É
+ResCoord:       1/N     -1.40843        0.798443        -0.0472968    É
+ResCoord:       1/C     -1.44167        0.734368        0.0170147    É
+ResCoord:       1/G     -1.28879        0.75616 0.056117    É
+
+>grep "ClusCoord"  output_file
+		ClusterName	Axes: 1st     2nd     3rd     4th    É
+ClusCoord:      Cluster_1       -0.282236       -1.12667        0.00226777    É
+ClusCoord:      Cluster_2       0.628373        0.320908        -0.00469394    É
+ClusCoord:      Cluster_3       -1.38322        0.76739 0.0100934       0.0204576    É
+ClusCoord:      Cluster_1_2_    0.316164        -0.175403       -0.00230707    É
+ClusCoord:      Cluster_1_3_    -0.722629       -0.369044       0.00539803    É
+ClusCoord:      Cluster_2_3_    0.109253        0.436129        -0.000877848    É
+
+//NOTICE: The Cluster name conveys information about the clusters involved, following the same
+ numeric notation as that obtained with >grep "^CL"output_file
+//NOTICE: E.g. Cluster_1_3_ means the cluster resulting from merging cluster 1 and cluster 3
+
+
+>grep "RCS"  output_file
+RCS: Cluster_name        Num_of_seqs    Total_num_of_positions   Num_ofpositiones_selected
+RCS: Cluster_1  12      220     22
+
+// To prints the selected positions whithin those attributed to each sequence cluster (or its combinations)
+that is considered when predicting SDPs (see "-r" option):
+>grep "RCL"  output_file
+
+RCL: Cluster_name       Rank    Position_selected       AminoAcid       Chi-squared_distance_to_cluster
+RCL: Cluster_1  1       19      L       0
+RCL: Cluster_1  1       127     L       0
+RCL: Cluster_1  1       21      K       0
+RCL: Cluster_1  1       11      G       0
+RCL: Cluster_1  1       117     F       0
+RCL: Cluster_1  2       70      T       0.19369402
+RCL: Cluster_1  2       93      L       0.19369402
+RCL: Cluster_1  3       180     G       0.19480215
+RCL: Cluster_1  4       147     I       0.19871157
+
+//NOTICE: E.g. RCL: Cluster_1  1       19      L       0
+means that position 19 has a Leucine (L) in Cluster 1 absolutely conserved within it (Chi-squared_distance_to_cluster equal to "0")
+
+>grep "RCL"  output_file
+
+RCM: Position_rank_per_cluster 
+RCM: AlignPosition          Cluster_1    Cluster_2    Cluster_3    Cluster_1_2_    Cluster_1_3_    Cluster_2_3_
+RCM: 1     0   0   0   0   0   0
+RCM: 2     0   0   0   0   0   0
+RCM: 3     0   0   0   0   0   0
+RCM: 4     0   0   0   0   0   0
+RCM: 5     0   0   0   0   0   0
+RCM: 6     7   2   0   0   0   0
+RCM: 7     0   0   0   0   0   0
+RCM: 8     0   0   0   0   0   0
+RCM: 9     0   0   0   0   0   0
+RCM: 10    -   -   -   -   -   -
+RCM: 11    1   0   0   0   0   0
+RCM: 12    0   0   0   2   0   0
+RCM: 13    0   0   0   0   0   0
+RCM: 14    7   1   1   0   0   0
+RCM: 15    0   0   0   0   0   0
+RCM: 16    0   0   0   5   0   0
+RCM: 17    0  16   0   0   0   0
+RCM: 18    9   0   0   0   0   0
+RCM: 19    1   0   0   0   0   0
+RCM: 20    0   0   0   0   0   0
+RCM: 21    1   3   1   0   0   0
+
+NOTICE: Positions 14 and 21 will be predicted as SDPs because their aminoacids are selected
+ for clusters that represent a complete partition (Cluster_1, Cluster_2, and Cluster_3 in 
+ these positions) and with an average rank lower than (see "-c option" above)
+
+
+==========================================================================================
+Please, cite the reference above when reporting any data obtained 
+using this program.
+
+Send any query/comment to the following address. Use this address also for
+reporting bugs. We will be very happy to know on any result (good or bad ;-)
+you may obtain using this program.
+
+Antonio Rausell
+Structural Biology and Biocomputing Programme
+Spanish National Cancer Research Centre (CNIO)
+Melchor Fernandez Almagro, 3. E-28029 Madrid
+Phone: +34-912246900 (ext 2254)
+e-mail address:	antonio.rausell@gmail.com
+
+
+
+
+____________________________________________________________________________________
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      THIRD-PARTY LIBRARIES USED BY S3det AND INCLUDED IN THE DISTRIBUTION:
+____________________________________________________________________________________
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The newmat10D library (a matrix library in C++) from Robert Davies 
+http://www.robertnz.net/nm10.htm
+Copyright (C) 2006: R B Davies
+2 April, 2006
+
+Conditions of use (quoting http://www.robertnz.net/nm10.htm):
+
+"I place no restrictions on the use of newmat except that I take no liability
+ for any problems that may arise from its use, distribution or other dealings
+ with it. You can use it in your commercial projects. You can make and distribute
+ modified or merged versions. You can include parts of it in your own software.
+ If you distribute modified or merged versions, please make it clear which parts
+ are mine and which parts are modified. For a substantially modified version, 
+ simply note that it is, in part, derived from my software. A comment in the code
+ will be sufficient.The software is provided "as is", without warranty of any kind.
+ Please understand that there may still be bugs and errors. Use at your own risk. 
+ I (Robert Davies) take no responsibility for any errors or omissions in this
+ package or for any misfortune that may befall you or others as a result of your
+ use, distribution or other dealings with it."
+
+------------------------------------------------------------------------------------
+
+The Boost.Regex library from John Maddock 
+http://www.boost.org/doc/libs/1_42_0/index.html
+Copyright © 1998 -2007 John Maddock
+
+Distributed under the Boost Software License, Version 1.0. 
+(quoting from http://www.boost.org/LICENSE_1_0.txt):
+
+Boost Software License - Version 1.0 - August 17th, 2003
+
+"Permission is hereby granted, free of charge, to any person or organization
+obtaining a copy of the software and accompanying documentation covered by
+this license (the "Software") to use, reproduce, display, distribute,
+execute, and transmit the Software, and to prepare derivative works of the
+Software, and to permit third-parties to whom the Software is furnished to
+do so, all subject to the following:
+
+The copyright notices in the Software and this entire statement, including
+the above license grant, this restriction and the following disclaimer,
+must be included in all copies of the Software, in whole or in part, and
+all derivative works of the Software, unless such copies or derivative
+works are solely in the form of machine-executable object code generated by
+a source language processor.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
+FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE."
+
+------------------------------------------------------------------------------------
+
+The C Clustering Library for cDNA microarray data 
+http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/software.htm#ctv
+The University of Tokyo, Institute of Medical Science, Human Genome Center 
+Michiel de Hoon, Seiya Imoto, Satoru Miyano
+Copyright © 2002-2005 Michiel Jan Laurens de Hoon 
+27 December 2010
+
+License quoting http://bonsai.hgc.jp/~mdehoon/software/cluster/cluster.pdf
+
+"Permission to use, copy, modify, and distribute this software and its 
+documentation with or without modifications and for any purpose and without
+ fee is hereby granted, provided that any copyright notices appear in all
+ copies and that both those copyright notices and this permission notice appear
+ in supporting documentation, and that the names of the contributors or copyright
+ holders not be used in advertising or publicity pertaining to distribution of 
+the software without specific prior permission. 
+THE CONTRIBUTORS AND COPYRIGHT HOLDERS OF THIS SOFTWARE DISCLAIM ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+ AND FITNESS, IN NO EVENT SHALL THE CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHAT- SOEVER RESULTING
+ FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ OTHER TORTIOUS ACTION, ARIS- ING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+ OF THIS SOFTWARE.
+------------------------------------------------------------------------------------
+
+The SUBSET library (a C library which performs various combinatorial operations) from John Burkardt
+http://people.sc.fsu.edu/~jburkardt/c_src/subset/subset.html
+
+Licensing (quoting http://people.sc.fsu.edu/~jburkardt/c_src/subset/subset.html)
+"The computer code and data files described and made available on this web page are
+ distributed under the GNU LGPL license" (see http://people.sc.fsu.edu/~jburkardt/txt/gnu_lgpl.txt)
+
+------------------------------------------------------------------------------------
+
