@@ -402,8 +402,8 @@ if (fs.fail()){
  string tmp_directory;
  string exec_directory;
  string order;
- int error_loading_conf_file;
- int Conf_error_couldnt_open;
+ int error_loading_conf_file=0;
+ int Conf_error_couldnt_open=0;
 
 loading_conf_file(
 		  conf_file,
