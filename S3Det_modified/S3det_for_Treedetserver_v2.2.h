@@ -199,7 +199,7 @@ bool fasta_protein_sequence (const std::string& s)
 }
 
 //This function converts a given string in a vector called "tokens" splitting it by a given delimiter
-void Tokenize(const string& str, vector<string>& tokens, const string& delimiters =" ")
+void Tokenize(const string& str, vector<string>& tokens, const string& delimiters)
 {
     // Skip delimiters at beginning.
     string::size_type lastPos = str.find_first_not_of(delimiters, 0);
