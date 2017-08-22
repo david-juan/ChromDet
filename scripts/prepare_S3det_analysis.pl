@@ -62,10 +62,11 @@ $"="\t";
 
 my ($bed_dir,$beds_file,$opt_help,$bedtools_path,$command,$cnt,$pre_cnt,$header,$prev_chr,$prev_start,$prev_end,$prev_pattern,$prev_ok,$sample,$state,$collapsed_sample_filtered);
 my ($prev_ok_region,$min_states,$min_samples_states,$min_regions_pattern,$out_pre,$bedtools_path,$collapses_file,$original_state,$traslated_pattern,$pre_traslation,$verbose);
-my ($number,$pattern_num,$prev_pattern_num,$autosomal);
+my ($number,$pattern_num,$prev_pattern_num,$autosomal,$random_pre);
 my (@AA,@tr,@tr2,@bed_files,@working_beds,@sample_names,@prev_ok_regions,@names,@seq,$i,@states,@numbers);
 my (%working_mnemo_bed_files,%states,%cont_patterns,%all_states,%states2code,%states_collapses,%pattern_collapse,%all_collapse_states,%state_number);
 
+$random_pre=int(rand(100000));
 $min_states=2;
 $min_samples_states=2;
 $min_regions_pattern=10;
@@ -139,10 +140,10 @@ while(my $bed_file=readdir(BED_DIR))
 			else{push @sample_names, $bed_file;}
 			if(!$command)
 			{
-				$command="$bedtools_path makewindows -b $bed_dir/$bed_file -w 200 -i src > $bed_dir/tmp_$cnt";
+				$command="$bedtools_path makewindows -b $bed_dir/$bed_file -w 200 -i src > $bed_dir/tmp$random_pre\_$cnt";
 			}else
 			{
-				$command="$bedtools_path intersect -a $bed_dir/tmp_$pre_cnt -b $bed_dir/$bed_file -wao |cut -f1-4,8 | perl -ne \'s\/\\t(\\w\+\\n\)\/\|\$1\/;print;\'  > $bed_dir/tmp_$cnt;rm $bed_dir/tmp_$pre_cnt";
+				$command="$bedtools_path intersect -a $bed_dir/tmp$random_pre\_$pre_cnt -b $bed_dir/$bed_file -wao |cut -f1-4,8 | perl -ne \'s\/\\t(\\w\+\\n\)\/\|\$1\/;print;\'  > $bed_dir/tmp$random_pre\_$cnt;rm $bed_dir/tmp$random_pre\_$pre_cnt";
 			}
 			system "$command";
 		}
@@ -178,8 +179,8 @@ if($collapses_file)
 $"="|";
 $header="\"#Chr\tStart\tEnd\t@sample_names\t@sample_names\"";
 push @prev_ok_regions,"#Chr\tStart\tEnd\t@sample_names\t@sample_names\n";
-system "echo $header > $bed_dir/$out_pre\_collapsed.tab;cat $bed_dir/tmp_$cnt >> $bed_dir/$out_pre\_collapsed.tab";
-system "rm $bed_dir/tmp_$cnt";
+system "echo $header > $bed_dir/$out_pre\_collapsed.tab;cat $bed_dir/tmp$random_pre\_$cnt >> $bed_dir/$out_pre\_collapsed.tab";
+system "rm $bed_dir/tmp$random_pre\_$cnt";
 
 if($verbose){print STDERR "PREPARING - Step 2: Filtering uninformative regions\n";}
 
