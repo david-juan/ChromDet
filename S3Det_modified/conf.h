@@ -11,9 +11,3 @@
 
 //--------------------------------------------------------------------------------
 string parameter_list_for_Treedet_Server="NO";
-//Conf for Treedet server
-// 	string parameter_list_for_Treedet_Server="YES";
-// 	string tmp_directory="/tmp/";
-// 	string exec_directory="/gpfs_home/treedet/SoftTreedetV3/LIB/Methods/S3DET/";
-// 	string order="/gpfs_home/soft/intel/R/bin/R";
-// 	string parameter_list_for_Treedet_Server="YES";
