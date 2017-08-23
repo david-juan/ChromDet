@@ -42,5 +42,5 @@ clean:
 	make clean -C boost_1_64_0
 	cd Newmat10D && rm *.o && rm libnewmat.a
 	rm Subset_library/subset.o
-	rm S3det_v2.1.exe
+	rm S3det_v2.4.exe
 	rm MCdet_v2.1.exe
