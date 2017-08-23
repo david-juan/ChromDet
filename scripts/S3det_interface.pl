@@ -11,7 +11,7 @@ S3det_interface.pl
 
 =head1 SYNOPSIS
 
-    Usage /path/to/run_MCA.pl [options] 
+    Usage /path/to/S3det_interface.pl [options] 
 
      Options:
 	   -d		'run_dir' [MANDATORY] directory containing the fasta and index files.
