@@ -111,8 +111,17 @@ if($verbose){print STDERR "Running $pre_command\n";}
 system qq[$pre_command];
 
 $current_dir = abs_path();
+$current_dir =~ s/\s/\\\ /ig;
 $abs_bed_dir = abs_path($bed_dir);
-$run_command = qq [$current_dir/S3det_interface.pl -d $abs_bed_dir -f $out_pre\_collapsed_filtered.fa -x $out_pre\_collapsed_filtered.tab -s $s3det_path];
+$abs_bed_dir =~ s/\s/\\\ /ig;
+if($pre_s3det_opts)
+{
+	$run_command = qq [$current_dir/S3det_interface.pl -d $abs_bed_dir -f $out_pre\_collapsed_filtered.fa -x $out_pre\_collapsed_filtered.tab -s $s3det_path -c "$pre_s3det_opts"];
+}else
+{	
+	$run_command = qq [$current_dir/S3det_interface.pl -d $abs_bed_dir -f $out_pre\_collapsed_filtered.fa -x $out_pre\_collapsed_filtered.tab -s $s3det_path];
+}
+
 if($verbose)
 {
 	$run_command.= " -v";

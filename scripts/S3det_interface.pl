@@ -77,6 +77,11 @@ GetOptions (
 
 pod2usage( -verbose => 2 ) if $opt_help || !$run_dir;
 
+$s3det_path=~ s/\s/\\\ /ig;
+$run_dir=~ s/\s/\\\ /ig;
+$fasta_file=~ s/\s/\\\ /ig;
+$index_file=~ s/\s/\\\ /ig;
+$out_pre=~ s/\s/\\\ /ig;
 if($pre_s3det_opts){$s3det_opts.=" $pre_s3det_opts";}
 
 if(!$fasta_file || !$index_file)
@@ -106,8 +111,8 @@ if($fasta_file && $index_file)
 	{
 		$s3det_file=$out_pre.".s3";
 	}
-	if($verbose){print STDERR "RUNNING - Step 1: Running $s3det_path/S3det_v2.2.exe -i $run_dir/$fasta_file -o $run_dir/$s3det_file $s3det_opts\n";}
-	if(!system "cd $s3det_path;./S3det_v2.2.exe -i $run_dir/$fasta_file -o $run_dir/$s3det_file $s3det_opts")
+	if($verbose){print STDERR "RUNNING - Step 1: Running $s3det_path/S3det_v2.4.exe -i $run_dir/$fasta_file -o $run_dir/$s3det_file $s3det_opts\n";}
+	if(!system "cd $s3det_path;./S3det_v2.4.exe -i $run_dir/$fasta_file -o $run_dir/$s3det_file $s3det_opts")
 	{
 	
 		if($verbose){print STDERR "RUNNING - Step 2: Extracting S3det results\n";}
