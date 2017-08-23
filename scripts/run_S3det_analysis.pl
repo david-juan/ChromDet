@@ -60,9 +60,6 @@ David Juan (david.juan@upf.edu)>
 
 $"="\t";
 
-#/Users/dadejuan/SMarsili/eggNOG/getting_ortholog_matrix.pl all /Users/dadejuan/SMarsili/eggNOG/eggNOG_metazoa_species_taxid.txt dataB/ ../../ /Users/dadejuan/SMarsili/tree_to_matrix.R /Users/dadejuan/SMarsili/eggNOG/tax_sciname-reformat.txt
-
-
 my ($bed_dir,$beds_file,$opt_help,$bedtools_path,$command,$cnt,$pre_cnt,$header,$prev_chr,$prev_start,$prev_end,$prev_pattern,$prev_ok,$sample,$state,$collapsed_sample_filtered);
 my ($prev_ok_region,$min_states,$min_samples_states,$min_regions_pattern,$out_pre,$bedtools_path,$collapses_file,$original_state,$traslated_pattern,$current_dir);
 my ($pre_s3det_opts,$s3det_path,$verbose,$pre_command,$abs_bed_dir,$run_command,$autosomal);
