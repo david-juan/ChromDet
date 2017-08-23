@@ -30,8 +30,8 @@ all:
 
 	$(CC) -c -g Subset_library/subset.C -o Subset_library/subset.o
 
-	$(CC) -c S3det_for_Treedetserver_v2.2.cpp $(INCLUDE)
-	$(CC) -o S3det_v2.2.exe S3det_for_Treedetserver_v2.2.o ./Subset_library/subset.o -lm $(LIBRARY_STATIC) 
+	$(CC) -c S3det_v2.4.cpp $(INCLUDE)
+	$(CC) -o S3det_v2.4.exe S3det_v2.4.o ./Subset_library/subset.o -lm $(LIBRARY_STATIC) 
 
 	$(CC) -c MCdet_scores_v2.1.cpp $(INCLUDE)
 	$(CC) -o MCdet_v2.1.exe MCdet_scores_v2.1.o -lm $(LIBRARY_STATIC)

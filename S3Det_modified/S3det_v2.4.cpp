@@ -1,5 +1,5 @@
-// NOTICE: TO compile the program:: g++ -o S3det_for_Treedetserver_v2.exe S3det_for_Treedetserver_v2.cpp cluster.o subset.o /usr/lib/libboost_regex.a -L /home/arausell/Newmat10B/ -lnewmat -lm -I /home/arausell/Newmat10B/ -B /home/arausell/Newmat10B/
-// NOTICE: To execute the program: S3det_for_Treedetserver_v2.exe -i Multiple_alignment_Fasta_file -o Output_file
+// NOTICE: TO compile the program:: g++ -o S3det_v2.4.exe S3det_v2.4.cpp cluster.o subset.o /usr/lib/libboost_regex.a -L /home/arausell/Newmat10B/ -lnewmat -lm -I /home/arausell/Newmat10B/ -B /home/arausell/Newmat10B/
+// NOTICE: To execute the program: S3det_v2.2.exe -i Multiple_alignment_Fasta_file -o Output_file
 
 
 #include <stdio.h> //Necessary for the sprintf function used in converting the "int type" into "char type"
@@ -37,16 +37,13 @@ using namespace std;
 using namespace RBD_LIBRARIES;
 #endif
 
-#include "S3det_for_Treedetserver_v2.2.h"//Declaration & definition of structures and functions
+#include "S3det_v2.4.h"//Declaration & definition of structures and functions
 
 //_______________________________________________________________________________________________________________________
 //                                             STARTS MAIN
 int main (int argc, char *argv[]) {
 
-// system("clear");
-try{
-// string tmp_directory="/local/arausell/tmp_C_trials/";
-// string exec_directory="/home/arausell/MCdet/Professional/";//Directory where R excutable files are hosted
+	try{
 
 
 int Analysis;
@@ -87,47 +84,6 @@ string Index_type="CH_Index";// CH_Index_squared, CH_Index, DB_Index, DB_Index_s
 string combinations="YES";
 string Interacton_option="NO";// "YES" or "NO"
 
-//Parameters list for Treedetserver:
-// if (parameter_list_for_Treedet_Server=="YES"){
-// 	string fasta_file_string=fasta_file;
-// 	srand((unsigned)time(0));
-// 	int random_integer;
-// 	int lowest=2000000, highest=20000000;
-// 	int range=(highest-lowest)+1;
-// 	random_integer = rand();
-	
-// 	char position_char[200];
-// 	sprintf (position_char,"%d",random_integer);
-	
-// 	tmp_directory+="S3DET";
-// 	tmp_directory+=position_char;
-// 	tmp_directory+="/";
-	
-// 	string new_order_to_system="mkdir ";new_order_to_system+=tmp_directory;	
-// 	const char* order_to_system=new_order_to_system.c_str();
-// 	system(order_to_system);
-//}
-
-//string exec_directory="/gpfs_home/treedet/SoftTreedetV3/LIB/Methods/S3DET/";//Directory where R excutable files are hosted
-// double selected_pertentage_of_residues=0.1;  //NOTICE: just considered in the unsupervised analysis
-// double Wilcoxon_cutoff=0.010;                //NOTICE: For the moment it selects the last axes fulfiling the selected cut-off
-// double percentage_of_gaps=0.10;
-// double percentage_of_similarity=0.4;
-// double minimum_group_size=3;//Groups with less than minimum_group_size are disregarded when predinting residues but not in clustering output //NOTICE: just considered in the unsupervised analysis
-
-//Rest of parameters list:
-
-// cout << "Choose Functional study type: S.Supervised U.Unsupervised : "; cin >> Functional_study;
-// if(Functional_study=='S'){cout << "Type Functional coding file (absolute path) : "; cin >> Function_coding_file;}
-// if(Functional_study=='U'){
-// 	cout << "Choose option: F.Fixed number of axes or I.Indefinite number of axes (allow the program to choose it) : "; cin >> Number_axes_option;
-// 	if(Number_axes_option=='F'){cout << "Select Number of axes (fixed) : "; cin >> Fixed_number_of_axes;}
-// 	if(Number_axes_option=='I'){cout << "Select Maximum Number of axes to study : "; cin >> Maximum_number_of_axes;}	
-// 	cout << "Choose option: F.Fixed number of groups or I.Indefinite number of groups (allow the program to choose it) : "; cin >> Number_groups_option;
-// 	if(Number_groups_option=='F'){cout << "Select Number of groups (fixed) : "; cin >> Fixed_number_of_groups;}
-// 	if(Number_groups_option=='I'){cout << "Select Maximum Number of groups to study : "; cin >> Maximum_number_of_groups;}	
-// }
-// cout << "Choose Analysis type: 1.MCA 2.MCA-Greenacre 3.Non-centered-PCA (Notice: non identical to FASS) 4.PCA : ";cin >> Analysis;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 if(argc<=2){
@@ -510,8 +466,8 @@ removing_outliers(
 	protein_name_vector,
 	outliers_name_vector
 );
-cout << "\t" << "Number of outliers (<" << percentage_of_similarity << "% of identity to any other sequence): " << number_of_outliers << "\n";
-fs << "UI: Number of outliers: (<" << percentage_of_similarity << "% of identity to any other sequence): " << number_of_outliers << "\n";
+cout << "\t" << "Number of outliers (<" << round(percentage_of_similarity*100) << "% of identity to any other sequence): " << number_of_outliers << "\n";
+fs << "UI: Number of outliers: (<" << round(percentage_of_similarity*100) << "% of identity to any other sequence): " << number_of_outliers << "\n";
 for(int i=0;i<outliers_name_vector.size();i++){
 	cout << "\t" << "OUTLIER REMOVED: "<< outliers_name_vector[i] << endl;
 	fs << "OUT: "<< outliers_name_vector[i] << endl;
@@ -519,8 +475,8 @@ for(int i=0;i<outliers_name_vector.size();i++){
 fs << "UI: Final number of sequences after removing outliers: " << number_of_sequences << "\n";
 cout << "Final number of sequences after removing outliers: " << number_of_sequences << "\n";
 if(!number_of_sequences){
-	fs << "Consider reducing the mininal perceentage of similarity (-s option)\n";
-	cout << "Consider reducing the mininal perceentage of similarity (-s option)\n";
+	fs << "Consider reducing the mininal percentage of identity (-s option)\n";
+	cout << "Consider reducing the mininal percentage of identity (-s option)\n";
 }
 
 removing_gappy_columns(
